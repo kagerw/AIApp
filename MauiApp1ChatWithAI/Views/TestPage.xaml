@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MauiApp1ChatWithAI.ViewModels"
+             x:Class="MauiApp1ChatWithAI.Views.TestPage"
+             x:DataType="vm:TestViewModel"
+             Title="Test Chat">
+
+    <Grid RowDefinitions="Auto,*,Auto" 
+          Padding="20" 
+          RowSpacing="20">
+
+        <!-- APIキー入力部分 -->
+        <VerticalStackLayout Grid.Row="0" Spacing="10">
+            <Label Text="APIキー設定" 
+                   FontSize="Medium" 
+                   FontAttributes="Bold"/>
+            <Grid ColumnDefinitions="*,Auto" 
+                  ColumnSpacing="10">
+                <Entry Grid.Column="0"
+                       Text="{Binding ApiKey}"
+                       IsPassword="True"
+                       Placeholder="APIキーを入力してください"/>
+                <Button Grid.Column="1"
+                        Text="初期化"
+                        Command="{Binding InitializeCommand}"/>
+            </Grid>
+        </VerticalStackLayout>
+
+        <!-- メッセージ表示部分 -->
+        <CollectionView Grid.Row="1" 
+               ItemsSource="{Binding Messages}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:MessageDisplay">
+                    <Grid Padding="10">
+                        <Frame Margin="5"
+                       Padding="10"
+                       BorderColor="LightGray"
+                       BackgroundColor="{Binding Role, Converter={StaticResource RoleToColorConverter}}"
+                       CornerRadius="10"
+                       HorizontalOptions="{Binding Role, Converter={StaticResource RoleToAlignmentConverter}}">
+                            <Label Text="{Binding Content}"
+                           TextColor="White"
+                           LineBreakMode="WordWrap" />
+                        </Frame>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <VerticalStackLayout HorizontalOptions="Center" 
+                           VerticalOptions="Center">
+                    <Label Text="メッセージがありません"
+                   TextColor="Gray"
+                   HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+        </CollectionView>
+
+        <!-- メッセージ入力部分 -->
+        <Grid Grid.Row="2" 
+              ColumnDefinitions="*,Auto" 
+              ColumnSpacing="10">
+            <Entry Grid.Column="0"
+                   Text="{Binding MessageInput}"
+                   Placeholder="メッセージを入力..."
+                   Completed="Entry_Completed"/>
+            <Button Grid.Column="1"
+                    Text="送信"
+                    Command="{Binding SendMessageCommand}"/>
+        </Grid>
+    </Grid>
+</ContentPage>

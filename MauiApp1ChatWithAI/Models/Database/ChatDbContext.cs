@@ -11,6 +11,7 @@ namespace MauiApp1ChatWithAI.Models.Database
 
         public ChatDbContext(DbContextOptions<ChatDbContext> options) : base(options)
         {
+            Database.EnsureCreated();  // 開発中は自動マイグレーション
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

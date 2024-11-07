@@ -1,4 +1,5 @@
-﻿using MauiApp1ChatWithClaude.Models;
+﻿using MauiApp1ChatWithAI.Models.Database;
+using MauiApp1ChatWithClaude.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,14 @@ namespace MauiApp1ChatWithAI.Service
 {
     public interface ILLMApiService
     {
-        Task<string> GetResponseAsync(string message);
+        Task<string> GetResponseAsync(
+            string message,
+            List<Message> conversationHistory,  // 履歴はChatServiceが管理
+            string? systemPrompt = null         // スレッドから取得
+        );
         Task InitializeAsync(string apiKey);
         Task<bool> LoadApiKey();
         Task ClearApiKey();
-        void ClearHistory();
         bool IsInitialized { get; }
-        //IReadOnlyList<Message> ConversationHistory { get; }
     }
 }
