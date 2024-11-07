@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MauiApp1ChatWithAI.Extensions;
 using MauiApp1ChatWithAI.Models.Database;
 using MauiApp1ChatWithAI.Service;
 using System.Collections.ObjectModel;
@@ -14,16 +15,6 @@ namespace MauiApp1ChatWithAI.ViewModels
         private string _threadId = string.Empty;
         private bool _isInitialized;
 
-        public TestViewModel(
-            ILLMApiService llmService,
-            IChatDataManager chatDataManager,
-            ChatService chatService)
-        {
-            _llmService = llmService;
-            _chatDataManager = chatDataManager;
-            _chatService = chatService;
-        }
-
         [ObservableProperty]
         private string apiKey = string.Empty;
 
@@ -32,6 +23,75 @@ namespace MauiApp1ChatWithAI.ViewModels
 
         [ObservableProperty]
         private ObservableCollection<MessageDisplay> messages = new();
+
+        [ObservableProperty]
+        private bool isApiKeyVisible = true;  // APIキー入力欄の表示制御用
+
+        public TestViewModel(
+            ILLMApiService llmService,
+            IChatDataManager chatDataManager,
+            ChatService chatService)
+        {
+            _llmService = llmService;
+            _chatDataManager = chatDataManager;
+            _chatService = chatService;
+
+            // 初期化処理を開始
+            InitializeAsync().FireAndForgetSafeAsync();
+        }
+
+        private async Task InitializeAsync()
+        {
+            try
+            {
+                // 保存済みのAPIキーを読み込み
+                _isInitialized = await _llmService.LoadApiKey();
+
+                if (_isInitialized)
+                {
+                    IsApiKeyVisible = false;  // APIキー入力欄を非表示
+                    await CreateTestThread();  // テストスレッドの作成
+                }
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("エラー",
+                    $"初期化中にエラーが発生しました: {ex.Message}", "OK");
+            }
+        }
+
+        private async Task CreateTestThread()
+        {
+            try
+            {
+                _threadId = await _chatDataManager.CreateThreadAsync(
+                    $"Test Thread {DateTime.Now:yyyy/MM/dd HH:mm:ss}",
+                    "Claude"
+                );
+                await _chatService.LoadThread(_threadId);
+
+                Messages.Add(new MessageDisplay(new Message
+                {
+                    Role = "system",
+                    MessageElements = new List<MessageElement>
+                {
+                    new MessageElement
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Type = "Text",
+                        Content = "テストスレッドが作成されました。メッセージを入力してください。",
+                        Timestamp = DateTime.UtcNow
+                    }
+                },
+                    Timestamp = DateTime.UtcNow
+                }));
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("エラー",
+                    $"テストスレッドの作成に失敗しました: {ex.Message}", "OK");
+            }
+        }
 
         [RelayCommand]
         private async Task Initialize()
@@ -46,36 +106,15 @@ namespace MauiApp1ChatWithAI.ViewModels
             {
                 await _llmService.InitializeAsync(ApiKey);
                 _isInitialized = true;
+                IsApiKeyVisible = false;
 
-                // テスト用スレッドを作成
-                _threadId = await _chatDataManager.CreateThreadAsync(
-                    $"Test Thread {DateTime.Now:yyyy/MM/dd HH:mm:ss}",
-                    "Claude"
-                );
-                await _chatService.LoadThread(_threadId);
-
-                // 初期メッセージを追加
-                Messages.Add(new MessageDisplay(new Message
-                {
-                    Role = "system",
-                    MessageElements = new List<MessageElement>
-                    {
-                        new MessageElement
-                        {
-                            Id = Guid.NewGuid().ToString(),
-                            Type = "Text",
-                            Content = "テストスレッドが作成されました。メッセージを入力してください。",
-                            Timestamp = DateTime.UtcNow
-                        }
-                    },
-                    Timestamp = DateTime.UtcNow
-                }));
-
+                await CreateTestThread();
                 await Shell.Current.DisplayAlert("成功", "初期化が完了しました", "OK");
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("エラー", $"初期化に失敗しました: {ex.Message}", "OK");
+                await Shell.Current.DisplayAlert("エラー",
+                    $"初期化に失敗しました: {ex.Message}", "OK");
             }
         }
 

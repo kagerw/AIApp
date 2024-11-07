@@ -11,19 +11,21 @@
           RowSpacing="20">
 
         <!-- APIキー入力部分 -->
-        <VerticalStackLayout Grid.Row="0" Spacing="10">
+        <VerticalStackLayout Grid.Row="0" 
+                     Spacing="10"
+                     IsVisible="{Binding IsApiKeyVisible}">
             <Label Text="APIキー設定" 
-                   FontSize="Medium" 
-                   FontAttributes="Bold"/>
+           FontSize="Medium" 
+           FontAttributes="Bold"/>
             <Grid ColumnDefinitions="*,Auto" 
-                  ColumnSpacing="10">
+          ColumnSpacing="10">
                 <Entry Grid.Column="0"
-                       Text="{Binding ApiKey}"
-                       IsPassword="True"
-                       Placeholder="APIキーを入力してください"/>
+               Text="{Binding ApiKey}"
+               IsPassword="True"
+               Placeholder="APIキーを入力してください"/>
                 <Button Grid.Column="1"
-                        Text="初期化"
-                        Command="{Binding InitializeCommand}"/>
+                Text="初期化"
+                Command="{Binding InitializeCommand}"/>
             </Grid>
         </VerticalStackLayout>
 
