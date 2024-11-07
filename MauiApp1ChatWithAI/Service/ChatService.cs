@@ -1,4 +1,5 @@
 ﻿using MauiApp1ChatWithAI.Models.Database;
+using System.Diagnostics;
 
 namespace MauiApp1ChatWithAI.Service
 {
@@ -16,6 +17,9 @@ namespace MauiApp1ChatWithAI.Service
         {
             _dataManager = dataManager;
             _llmService = llmService;
+
+            var dbPath = Path.Combine(FileSystem.AppDataDirectory, "chat.db");
+            Debug.WriteLine($"Database location: {dbPath}");
         }
 
 
