@@ -127,7 +127,7 @@ namespace MauiApp1ChatWithAI.Service
             var testMessage = new
             {
                 model = "claude-3-5-sonnet-20241022",
-                max_tokens = 10,
+                max_tokens = 4096,
                 messages = new[] { new { role = "user", content = message } }
             };
 
@@ -152,13 +152,21 @@ namespace MauiApp1ChatWithAI.Service
 
             using (JsonDocument document = JsonDocument.Parse(responseBody))
             {
-                var responseText = document.RootElement
+                try
+                {
+                    var responseText = document.RootElement
                     .GetProperty("content")
                     .EnumerateArray()
                     .First()
                     .GetProperty("text")
                     .GetString();
-                return responseText;
+                    return responseText ?? throw new Exception("Empty response from API"); ;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"JSON Parse Error: {ex.Message}");
+                    throw new Exception($"Failed to parse API response: {ex.Message}", ex);
+                }
             }
         }
 

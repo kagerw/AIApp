@@ -9,10 +9,4 @@ public partial class TestPage : ContentPage
         InitializeComponent();
         BindingContext = viewModel;
     }
-
-    private void Entry_Completed(object sender, EventArgs e)
-    {
-        var viewModel = BindingContext as TestViewModel;
-        viewModel?.SendMessageCommand.Execute(null);
-    }
 }

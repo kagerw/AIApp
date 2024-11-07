@@ -64,8 +64,7 @@
               ColumnSpacing="10">
             <Entry Grid.Column="0"
                    Text="{Binding MessageInput}"
-                   Placeholder="メッセージを入力..."
-                   Completed="Entry_Completed"/>
+                   Placeholder="メッセージを入力..."/>
             <Button Grid.Column="1"
                     Text="送信"
                     Command="{Binding SendMessageCommand}"/>
