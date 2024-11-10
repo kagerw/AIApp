@@ -7,9 +7,28 @@
     xmlns:view="clr-namespace:MauiApp1ChatWithAI.Views"
     Shell.FlyoutBehavior="Disabled"
     Title="MauiApp1ChatWithAI">
+    <Shell.Resources>
+        <ResourceDictionary>
+            <Style x:Key="BaseStyle" TargetType="Element">
+                <Setter Property="Shell.BackgroundColor" Value="{StaticResource Primary}" />
+                <Setter Property="Shell.ForegroundColor" Value="{OnPlatform WinUI={StaticResource Primary}, Default=White}" />
+                <Setter Property="Shell.TitleColor" Value="White" />
+                <Setter Property="Shell.UnselectedColor" Value="#95FFFFFF" />
+            </Style>
+            <Style BasedOn="{StaticResource BaseStyle}" TargetType="ShellItem" />
+        </ResourceDictionary>
+    </Shell.Resources>
+
 
     <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate view:TestPage}"
-        Route="view:TestPage" />
+        Title="Chat"
+        ContentTemplate="{DataTemplate view:MainPage}"
+        Route="MainPage">
+        <ShellContent.Icon>
+            <FontImageSource
+                FontFamily="OpenSansRegular"
+                Glyph="💬"
+                Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+        </ShellContent.Icon>
+    </ShellContent>
 </Shell>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiApp1ChatWithAI.Views.ThreadSettingsPage"
+             Title="ThreadSettingsPage">
+    <VerticalStackLayout Padding="20" Spacing="20">
+        <!-- タイトル設定 -->
+        <VerticalStackLayout Spacing="5">
+            <Label Text="スレッドタイトル"
+                   Style="{StaticResource FormLabelStyle}"/>
+            <Entry Text="{Binding Title}"
+                   Placeholder="タイトルを入力..."/>
+        </VerticalStackLayout>
+
+        <!-- プロバイダー選択 -->
+        <VerticalStackLayout Spacing="5">
+            <Label Text="プロバイダー"
+                   Style="{StaticResource FormLabelStyle}"/>
+            <Picker ItemsSource="{Binding Providers}"
+                    SelectedItem="{Binding SelectedProvider}"/>
+        </VerticalStackLayout>
+
+        <!-- システムプロンプト設定 -->
+        <VerticalStackLayout Spacing="5">
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="システムプロンプト"
+                       Style="{StaticResource FormLabelStyle}"
+                       VerticalOptions="Center"/>
+                <CheckBox Grid.Column="1"
+                         IsChecked="{Binding IsSystemPromptEnabled}"/>
+            </Grid>
+            <Editor Text="{Binding SystemPrompt}"
+                    HeightRequest="150"
+                    IsEnabled="{Binding IsSystemPromptEnabled}"
+                    Placeholder="システムプロンプトを入力..."/>
+        </VerticalStackLayout>
+
+        <!-- ボタン -->
+        <HorizontalStackLayout Spacing="10" 
+                              HorizontalOptions="End">
+            <Button Text="キャンセル"
+                    Command="{Binding CancelCommand}"/>
+            <Button Text="保存"
+                    Command="{Binding SaveCommand}"/>
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
+</ContentPage>

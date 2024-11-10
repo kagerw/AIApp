@@ -1,0 +1,47 @@
+public partial class ThreadSettingsViewModel : ViewModelBase
+{
+    private readonly IChatDataManager _dataManager;
+
+    [ObservableProperty]
+    private string threadTitle = string.Empty;
+
+    [ObservableProperty]
+    private string provider = AppConstants.Providers.Claude;  // 現時点では固定
+
+    public ThreadSettingsViewModel(IChatDataManager dataManager)
+    {
+        _dataManager = dataManager;
+        Title = "スレッド作成";
+    }
+
+    [RelayCommand]
+    private async Task Save()
+    {
+        if (string.IsNullOrWhiteSpace(ThreadTitle))
+        {
+            await Shell.Current.DisplayAlert("エラー", "タイトルを入力してください", "OK");
+            return;
+        }
+
+        try
+        {
+            await _dataManager.CreateThreadAsync(
+                ThreadTitle,
+                Provider
+            );
+
+            await Shell.Current.GoToAsync("..");
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlert("エラー", 
+                $"スレッドの作成に失敗しました: {ex.Message}", "OK");
+        }
+    }
+
+    [RelayCommand]
+    private async Task Cancel()
+    {
+        await Shell.Current.GoToAsync("..");
+    }
+}

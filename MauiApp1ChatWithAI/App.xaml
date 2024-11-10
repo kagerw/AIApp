@@ -6,9 +6,10 @@
              x:Class="MauiApp1ChatWithAI.App">
     <Application.Resources>
         <ResourceDictionary>
+            <converters:RoleToBackgroundConverter x:Key="RoleToBackgroundConverter"/>
             <converters:RoleToAlignmentConverter x:Key="RoleToAlignmentConverter"/>
-            <converters:RoleToColorConverter x:Key="RoleToColorConverter"/>
-            <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
+            <converters:RoleToTextColorConverter x:Key="RoleToTextColorConverter"/>
+            <converters:BoolToBackgroundConverter x:Key="BoolToBackgroundConverter"/>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />

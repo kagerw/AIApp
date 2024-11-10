@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiApp1ChatWithAI.Views.MainPage"
+             xmlns:vm="clr-namespace:MauiApp1ChatWithAI.ViewModels"
+             xmlns:models="clr-namespace:MauiApp1ChatWithAI.Models.Database"
+             xmlns:view="clr-namespace:MauiApp1ChatWithAI.Views"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             Title="MainPage">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Top Bar -->
+        <Grid Grid.Row="0" 
+              ColumnDefinitions="Auto,*,Auto,Auto"
+              BackgroundColor="White"
+              Padding="15"
+              ColumnSpacing="15">
+
+            <Button Grid.Column="0"
+                    Text="☰"
+                    Command="{Binding ToggleSidebarCommand}"
+                    Style="{StaticResource TabButtonStyle}"/>
+
+            <Label Grid.Column="1"
+                   Text="{Binding Title}"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   VerticalOptions="Center"/>
+
+            <Button Grid.Column="2"
+                    Text="＋ New Chat"
+                    Command="{Binding CreateThreadCommand}"/>
+
+            <Button Grid.Column="3"
+                    Text="⚙"
+                    Command="{Binding OpenSettingsCommand}"
+                    Style="{StaticResource TabButtonStyle}"/>
+        </Grid>
+
+        <!-- Messages Area -->
+        <CollectionView Grid.Row="1"
+                       ItemsSource="{Binding Messages}"
+                       Margin="15">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:MessageDisplay">
+                    <Grid Padding="10">
+                        <Frame Padding="15"
+                               BackgroundColor="{Binding Role, Converter={StaticResource RoleToBackgroundConverter}}"
+                               BorderColor="Transparent"
+                               CornerRadius="8"
+                               HorizontalOptions="{Binding Role, Converter={StaticResource RoleToAlignmentConverter}}">
+                            <Label Text="{Binding Content}"
+                                   TextColor="{Binding Role, Converter={StaticResource RoleToTextColorConverter}}"/>
+                        </Frame>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Input Area -->
+        <Grid Grid.Row="2"
+              ColumnDefinitions="*,Auto"
+              Padding="15"
+              ColumnSpacing="10"
+              BackgroundColor="White">
+
+            <Entry Grid.Column="0"
+                   Text="{Binding MessageInput}"
+                   Placeholder="メッセージを入力..."
+                   ReturnCommand="{Binding SendMessageCommand}"/>
+
+            <Button Grid.Column="1"
+                    IsEnabled="{Binding IsNotBusy}"
+                    Command="{Binding SendMessageCommand}">
+                <Button.ImageSource>
+                    <FontImageSource FontFamily="OpenSansRegular"
+                                   Glyph="📤"
+                                   Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}"/>
+                </Button.ImageSource>
+            </Button>
+        </Grid>
+
+        <!-- ThreadList Overlay -->
+        <view:ThreadListControl
+            x:Name="ThreadList"
+            BindingContext="{Binding}"
+            IsVisible="{Binding IsThreadListVisible}"
+            BackgroundColor="White"
+            WidthRequest="300"
+            HorizontalOptions="Start">
+            <view:ThreadListControl.Shadow>
+                <Shadow Brush="Black"
+                        Offset="3,0"
+                        Opacity="0.2"
+                        Radius="3" />
+            </view:ThreadListControl.Shadow>
+        </view:ThreadListControl>
+    </Grid>
+</ContentPage>

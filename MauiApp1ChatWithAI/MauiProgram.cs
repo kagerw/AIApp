@@ -1,4 +1,5 @@
-﻿using MauiApp1ChatWithAI.Models.Database;
+﻿using CommunityToolkit.Maui;
+using MauiApp1ChatWithAI.Models.Database;
 using MauiApp1ChatWithAI.Service;
 using MauiApp1ChatWithAI.ViewModels;
 using MauiApp1ChatWithAI.Views;
@@ -14,6 +15,7 @@ namespace MauiApp1ChatWithAI
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -35,6 +37,16 @@ namespace MauiApp1ChatWithAI
             // ViewModels and Pages
             builder.Services.AddTransient<TestViewModel>();
             builder.Services.AddTransient<TestPage>();
+
+            // ViewModels
+            builder.Services.AddTransient<MainViewModel>();
+            builder.Services.AddTransient<DevMenuViewModel>();
+            builder.Services.AddTransient<ThreadSettingsViewModel>();
+
+            // Views
+            builder.Services.AddTransient<MainPage>();
+            builder.Services.AddTransient<DevMenuPage>();
+            builder.Services.AddTransient<ThreadSettingsPage>();
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
