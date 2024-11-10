@@ -28,8 +28,6 @@ namespace MauiApp1ChatWithAI.ViewModels
         public event EventHandler<ChatThread> ThreadSelected;
 
         public ThreadListViewModel(IChatDataManager chatDataManager)
-        
-        
         {
             _chatDataManager = chatDataManager;
             threads = new ObservableCollection<ChatThread>();
@@ -51,13 +49,6 @@ namespace MauiApp1ChatWithAI.ViewModels
             {
                 IsLoading = false;
             }
-        }
-
-        [RelayCommand]
-        private void SelectThread(ChatThread thread)
-        {
-            SelectedThread = thread;
-            ThreadSelected?.Invoke(this, thread);
         }
 
         partial void OnSelectedThreadChanged(ChatThread value)

@@ -21,8 +21,7 @@ namespace MauiApp1ChatWithAI.Service
             var dbPath = Path.Combine(FileSystem.AppDataDirectory, "chat.db");
             Debug.WriteLine($"Database location: {dbPath}");
         }
-
-
+        
         private ILLMApiService GetServiceForThread(string provider)
         {
             if (!_serviceCache.ContainsKey(provider))
@@ -62,6 +61,9 @@ namespace MauiApp1ChatWithAI.Service
 
             // システムプロンプトの取得
             string? systemPrompt = thread.IsSystemPromptEnabled ? thread.SystemPrompt : null;
+
+            // TODO : 何かうまい手はないか？
+            await _llmService.LoadApiKey();
 
             // APIコール
             // memo:ここでエラーになった。なぜなら初期化をやってなかった。

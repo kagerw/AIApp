@@ -24,3 +24,70 @@
 | - APIキー保存 | － | ✅ ISecureStorage | ❌ ISettingsService | － |
 | - プロンプト保存 | ❌ | ✅ ISecureStorage | ❌ ISettingsService | － |
 */
+
+## 1. フォルダ構成
+```
+MauiApp1ChatWithAI/
+├── Extensions/
+│   └── TaskExtensions.cs         // 非同期処理用ユーティリティ
+├── Models/
+│   ├── Database/                 // DBモデル
+│   │   ├── ChatThread.cs
+│   │   ├── Message.cs
+│   │   └── MessageElement.cs
+│   └── MessageDisplay.cs         // UI表示用モデル
+├── ViewModels/
+│   ├── ViewModelBase.cs
+│   ├── MainViewModel.cs
+│   ├── ThreadSettingsViewModel.cs
+│   └── DevMenuViewModel.cs
+├── Views/
+│   ├── MainPage.xaml
+│   ├── ThreadSettingsPage.xaml
+│   ├── DevMenuPage.xaml
+│   └── ThreadListControl.xaml
+└── Services/
+    ├── IChatDataManager.cs
+    ├── ChatDataManager.cs
+    ├── ILLMApiService.cs
+    ├── ClaudeApiService.cs
+    ├── ISecureStorageService.cs
+    └── ChatService.cs
+
+KPT
+/*
+# Keep（良かった点・継続したいこと）
+- 既存のPoCコードを参考に実装できた
+- MVVMパターンを適切に使用できた
+- コンポーネントの責務を適切に分離できた（ThreadListControlなど）
+- デバッグ時にエラー原因を段階的に追えた
+- イベント購読解除などの重要な実装を忘れずに行えた
+
+# Problem（課題・問題点）
+- ChatServiceの初期化漏れがあった
+- 実装の優先順位付けが曖昧だった
+- 既存コードの確認が不十分なケースがあった
+- ViewModelのエラーハンドリングが不完全
+- UIのスタイリングが後回しになっている
+
+# Try（次回に向けての改善案）
+- 実装前により詳細な設計レビューを行う
+- サービスクラスの初期化処理を漏れなくチェック
+- エラーハンドリングの統一的な方針を決める
+- スタイリングのガイドラインを事前に決める
+- ViewModelのテストを書く
+- 状態管理（Loading/Error状態など）をより明確に実装する
+
+# 次のタスクの優先順位
+1. ThreadSettingsPageの実装
+  - 新規スレッド作成機能は重要な基本機能
+  - システムプロンプト設定も含める
+
+2. ISettingsServiceの実装
+  - APIキー管理やプロンプト保存の基盤となる
+  - 設定の永続化に必要
+
+3. DevMenuPageの実装
+  - 開発効率化のために必要
+  - デバッグやテストに役立つ
+*/

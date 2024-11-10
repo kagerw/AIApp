@@ -102,6 +102,12 @@ namespace MauiApp1ChatWithAI.ViewModels
             }
         }
 
+        [RelayCommand]
+        private async Task OpenDevMenu()
+        {
+            await Shell.Current.GoToAsync(nameof(Views.DevMenuPage));
+        }
+
         private async void OnThreadSelected(object sender, ChatThread thread)
         {
             // スレッド選択時にサイドバーを閉じる

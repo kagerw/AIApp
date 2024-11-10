@@ -15,8 +15,7 @@
         <CollectionView Grid.Row="1"
                        ItemsSource="{Binding Threads}"
                        SelectedItem="{Binding SelectedThread}"
-                       SelectionMode="Single"
-                       SelectionChanged="OnSelectionChanged">
+                       SelectionMode="Single">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Grid Padding="16,12"

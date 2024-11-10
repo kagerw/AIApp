@@ -9,8 +9,8 @@ namespace MauiApp1ChatWithAI.Service
     public interface ISettingsService
     {
         Task<string?> GetApiKey(string provider);
+        Task<string?> GetSystemPrompt(string claude);
         Task SaveApiKey(string provider, string apiKey);
-        Task<string?> GetSystemPrompt(string provider);
-        Task SaveSystemPrompt(string provider, string prompt);
+        Task SaveSystemPrompt(string claude, string defaultSystemPrompt);
     }
 }

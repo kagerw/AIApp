@@ -43,7 +43,7 @@ namespace MauiApp1ChatWithAI.ViewModels
         {
             // 保存済み設定の読み込み
             apiKey = await _settingsService.GetApiKey(AppConstants.Providers.Claude) ?? string.Empty;
-            defaultSystemPrompt = await _settingsService.GetSystemPrompt(AppConstants.Providers.Claude) ?? string.Empty;
+            //defaultSystemPrompt = await _settingsService.GetSystemPrompt(AppConstants.Providers.Claude) ?? string.Empty;
         }
 
         [RelayCommand]

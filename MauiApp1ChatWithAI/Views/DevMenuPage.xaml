@@ -1,68 +1,46 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:MauiApp1ChatWithAI.ViewModels"
              x:Class="MauiApp1ChatWithAI.Views.DevMenuPage"
-             Title="DevMenuPage">
+             x:DataType="viewmodel:DevMenuViewModel"
+             Title="{Binding Title}">
 
-    <Grid RowDefinitions="Auto,*" Padding="20">
-        <!-- タブヘッダー -->
-        <Grid Grid.Row="0" 
-              ColumnDefinitions="*,*" 
-              Margin="0,0,0,20">
-            <Button Grid.Column="0"
-                    Text="API設定"
-                    Command="{Binding SwitchTabCommand}"
-                    CommandParameter="api"
-                    Style="{StaticResource TabButtonStyle}"
-                    BackgroundColor="{Binding IsApiTabSelected, Converter={StaticResource BoolToBackgroundConverter}}"/>
-            <Button Grid.Column="1"
-                    Text="デフォルトプロンプト"
-                    Command="{Binding SwitchTabCommand}"
-                    CommandParameter="prompts"
-                    Style="{StaticResource TabButtonStyle}"
-                    BackgroundColor="{Binding IsPromptsTabSelected, Converter={StaticResource BoolToBackgroundConverter}}"/>
-        </Grid>
+    <Grid RowDefinitions="*,Auto" 
+          Padding="20"
+          RowSpacing="20">
 
-        <!-- タブコンテンツ -->
-        <Grid Grid.Row="1">
-            <!-- API設定タブ -->
-            <VerticalStackLayout IsVisible="{Binding IsApiTabSelected}"
-                               Spacing="20">
-                <VerticalStackLayout Spacing="5">
-                    <Label Text="Claude API Key"
-                           Style="{StaticResource FormLabelStyle}"/>
-                    <Grid ColumnDefinitions="*,Auto" 
-                          ColumnSpacing="10">
-                        <Entry Grid.Column="0"
-                               Text="{Binding ApiKey}"
+        <!-- メインコンテンツエリア -->
+        <VerticalStackLayout Grid.Row="0" Spacing="20">
+
+            <!-- API設定セクション -->
+            <Frame Padding="15" BorderColor="Gray">
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="API Settings"
+                           FontSize="20"
+                           FontAttributes="Bold"/>
+
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="API Key"/>
+                        <Entry Text="{Binding ApiKey}"
                                IsPassword="True"
-                               Placeholder="APIキーを入力..."/>
-                        <Button Grid.Column="1"
-                                Text="検証"
-                                Command="{Binding ValidateApiKeyCommand}"/>
-                    </Grid>
-                </VerticalStackLayout>
-            </VerticalStackLayout>
+                               Placeholder="Enter your API key"/>
+                    </VerticalStackLayout>
 
-            <!-- プロンプト設定タブ -->
-            <VerticalStackLayout IsVisible="{Binding IsPromptsTabSelected}"
-                               Spacing="20">
-                <VerticalStackLayout Spacing="5">
-                    <Label Text="デフォルトシステムプロンプト"
-                           Style="{StaticResource FormLabelStyle}"/>
-                    <Editor Text="{Binding DefaultSystemPrompt}"
-                            HeightRequest="200"
-                            Placeholder="デフォルトのシステムプロンプトを入力..."/>
+                    <Button Text="Validate API Key"
+                            Command="{Binding ValidateApiKeyCommand}"
+                            HorizontalOptions="End"/>
                 </VerticalStackLayout>
-            </VerticalStackLayout>
-        </Grid>
+            </Frame>
+
+        </VerticalStackLayout>
+
+        <!-- 保存ボタン -->
+        <Button Grid.Row="1" 
+                Text="Save"
+                Command="{Binding SaveCommand}"
+                HorizontalOptions="Fill"/>
+
     </Grid>
 
-    <!-- 保存ボタン -->
-    <ContentPage.ToolbarItems>
-        <ToolbarItem Text="保存"
-                     Command="{Binding SaveCommand}"
-                     Order="Primary"
-                     Priority="0" />
-    </ContentPage.ToolbarItems>
 </ContentPage>

@@ -35,7 +35,8 @@
                         Margin="8,0"/>
 
                 <Button Grid.Column="3"
-                        Text="Settings"/>
+                    Text="Settings"
+                    Command="{Binding OpenDevMenuCommand}"/>
             </Grid>
 
             <!-- チャットエリア -->

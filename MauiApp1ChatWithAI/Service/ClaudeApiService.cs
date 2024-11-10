@@ -15,17 +15,17 @@ namespace MauiApp1ChatWithAI.Service
     {
         private readonly HttpClient _httpClient;
         private string? _apiKey;
-        private readonly ISecureStorageService _secureStorage;
-        private const string API_KEY_STORAGE_KEY = "claude_api_key";
+        private readonly ISettingsService _settingsService;
+        private const string PROVIDER_NAME = "claude";
         private const string ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
 
         public bool IsInitialized => !string.IsNullOrEmpty(_apiKey);
 
         // 既存のコンストラクタを維持
-        public ClaudeApiService(ISecureStorageService secureStorage)
+        public ClaudeApiService(ISettingsService settingsService)
         {
-            _httpClient = new HttpClient(); ;
-            _secureStorage = secureStorage;
+            _httpClient = new HttpClient();
+            _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
             _httpClient.BaseAddress = new Uri("https://api.anthropic.com/v1/");
         }
 
@@ -37,10 +37,8 @@ namespace MauiApp1ChatWithAI.Service
 
             try
             {
-                // リクエストの作成
+                // APIキーの検証ロジック（既存のまま）
                 var request = new HttpRequestMessage(HttpMethod.Post, "messages");
-
-                // ヘッダーの設定
                 request.Headers.Add("x-api-key", apiKey);
                 request.Headers.Add("anthropic-version", "2023-06-01");
 
@@ -49,21 +47,17 @@ namespace MauiApp1ChatWithAI.Service
                     model = "claude-3-sonnet-20240229",
                     messages = new[]
                     {
-                        new { role = "user", content = "test" }
-                    },
+                    new { role = "user", content = "test" }
+                },
                     max_tokens = 10
                 };
 
-                request.Content = JsonContent.Create(testContent, options: new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                });
-
+                request.Content = JsonContent.Create(testContent);
                 var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
 
                 // APIキーが有効な場合のみ保存
-                await _secureStorage.SetSecureValue(API_KEY_STORAGE_KEY, apiKey);
+                await _settingsService.SaveApiKey(PROVIDER_NAME, apiKey);
                 _apiKey = apiKey;
             }
             catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -76,12 +70,11 @@ namespace MauiApp1ChatWithAI.Service
             }
         }
 
-        // LoadApiKeyとClearApiKeyを修正
         public async Task<bool> LoadApiKey()
         {
             try
             {
-                _apiKey = await _secureStorage.GetSecureValue(API_KEY_STORAGE_KEY);
+                _apiKey = await _settingsService.GetApiKey(PROVIDER_NAME);
                 return IsInitialized;
             }
             catch
@@ -94,7 +87,7 @@ namespace MauiApp1ChatWithAI.Service
         {
             try
             {
-                await _secureStorage.RemoveSecureValue(API_KEY_STORAGE_KEY);
+                await _settingsService.SaveApiKey(PROVIDER_NAME, string.Empty);
                 _apiKey = null;
             }
             catch (Exception ex)
