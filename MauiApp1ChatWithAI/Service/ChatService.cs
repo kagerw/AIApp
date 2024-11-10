@@ -64,6 +64,8 @@ namespace MauiApp1ChatWithAI.Service
             string? systemPrompt = thread.IsSystemPromptEnabled ? thread.SystemPrompt : null;
 
             // APIコール
+            // memo:ここでエラーになった。なぜなら初期化をやってなかった。
+            // 現在：ここでエラーになる。なぜならAPI-Keyが未入力だから。
             var response = await _llmService.GetResponseAsync(
                 message,
                 _threadMessages[threadId],

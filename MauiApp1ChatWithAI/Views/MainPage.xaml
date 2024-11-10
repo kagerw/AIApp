@@ -76,9 +76,11 @@
                   ColumnSpacing="10"
                   BackgroundColor="White">
                 <Entry Grid.Column="0"
-                    Placeholder="Type your message..."/>
+                   Text="{Binding MessageInput}"
+                   Placeholder="Type your message..."/>
                 <Button Grid.Column="1"
-            Text="Send"/>
+                    Text="Send"
+                    Command="{Binding SendMessageCommand}"/>
             </Grid>
         </Grid>
 

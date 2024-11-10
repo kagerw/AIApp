@@ -111,10 +111,14 @@ namespace MauiApp1ChatWithAI.ViewModels
             // 会話履歴の取得
             try
             {
+                // これを追加した。
+                await _chatService.LoadThread(thread.Id);
                 var messageHistory = await _chatDataManager.GetMessagesAsync(thread.Id);
                 Messages = new ObservableCollection<MessageDisplay>(
                     messageHistory.Select(m => new MessageDisplay(m))
                 );
+
+                Debug.WriteLine($"Loaded messages count: {messageHistory.Count}");
             }
             catch (Exception ex)
             {
@@ -125,23 +129,55 @@ namespace MauiApp1ChatWithAI.ViewModels
         }
 
         [RelayCommand]
-        private async Task SendMessage()
+        private async Task SendMessageAsync()
         {
-            if (string.IsNullOrWhiteSpace(MessageInput) || SelectedThread == null)
+            if (string.IsNullOrWhiteSpace(MessageInput))
                 return;
 
             try
             {
-                var content = MessageInput;
-                MessageInput = string.Empty;  // 入力欄をクリア
+                var userMessage = MessageInput;
+                MessageInput = string.Empty;  // 先にクリア
 
-                await _chatService.SendMessage(SelectedThread.Id, content);
-                await LoadMessages(SelectedThread.Id);
+                // ユーザーメッセージの表示
+                var userMessageObject = new Message
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    ThreadId = ThreadListViewModel.SelectedThread.Id,
+                    Role = "user",
+                    Timestamp = DateTime.UtcNow,
+                    MessageElements = new List<MessageElement>
+                    {
+                        new MessageElement
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            Type = "Text",
+                            Content = userMessage,
+                            Timestamp = DateTime.UtcNow
+                        }
+                    }
+                };
+                Messages.Add(new MessageDisplay(userMessageObject));
+
+                // メッセージ送信と応答取得
+                // メモ：ここでエラーになった、なぜなら初期化をやってなかった。
+                var messageId = await _chatService.SendMessage(
+                    ThreadListViewModel.SelectedThread.Id,
+                    userMessage
+                );
+
+                var messages = _chatService.GetThreadMessages(ThreadListViewModel.SelectedThread.Id);
+                var responseMessage = messages.LastOrDefault();
+
+                if (responseMessage != null)
+                {
+                    Messages.Add(new MessageDisplay(responseMessage));
+                }
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("エラー",
-                    $"メッセージの送信に失敗しました: {ex.Message}", "OK");
+                Debug.WriteLine($"Failed to send message: {ex.Message}");
+                // TODO: エラー表示
             }
         }
 
