@@ -47,6 +47,9 @@ namespace MauiApp1ChatWithAI
             builder.Services.AddTransient<MainPage>();
             builder.Services.AddTransient<DevMenuPage>();
             builder.Services.AddTransient<ThreadSettingsPage>();
+
+            builder.Services.AddTransient<ThreadListViewModel>();
+            builder.Services.AddTransient<ThreadListControl>();
 #if DEBUG
             builder.Logging.AddDebug();
 #endif

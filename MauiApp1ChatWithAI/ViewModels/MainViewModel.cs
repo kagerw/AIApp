@@ -38,10 +38,20 @@ namespace MauiApp1ChatWithAI.ViewModels
         [ObservableProperty]
         private bool isThreadListVisible;
 
+        [ObservableProperty]
+        private double sidebarTranslation = -300;
+
+        [ObservableProperty]
+        private bool isSidebarOpen;
+
+        public ThreadListViewModel ThreadListViewModel { get; }
+
         public MainViewModel(
             IChatDataManager dataManager,
             ILLMApiService llmService,
-            ChatService chatService)
+            ChatService chatService,
+            IChatDataManager chatDataManager,
+            ThreadListViewModel threadListViewModel)
         {
             _dataManager = dataManager;
             _llmService = llmService;
@@ -50,11 +60,21 @@ namespace MauiApp1ChatWithAI.ViewModels
 
             // 初期データ読み込み
             LoadThreadsAsync().FireAndForgetSafeAsync();
+
+            ThreadListViewModel = threadListViewModel;
+            ThreadListViewModel.ThreadSelected += OnThreadSelected;
         }
 
         public override async Task InitializeAsync()
         {
             await LoadThreads();
+        }
+
+        [RelayCommand]
+        private void ToggleSidebar()
+        {
+            IsSidebarOpen = !IsSidebarOpen;
+            SidebarTranslation = IsSidebarOpen ? 0 : -300;
         }
 
         [RelayCommand]
@@ -83,12 +103,11 @@ namespace MauiApp1ChatWithAI.ViewModels
             }
         }
 
-        [RelayCommand]
-        private async Task ToggleSidebar()
+        private void OnThreadSelected(object sender, ChatThread thread)
         {
-            // Shell.FlyoutBehaviorの切り替え
-            Shell.Current.FlyoutBehavior = Shell.Current.FlyoutBehavior
-                == FlyoutBehavior.Flyout ? FlyoutBehavior.Disabled : FlyoutBehavior.Flyout;
+            // スレッド選択時にサイドバーを閉じる
+            IsSidebarOpen = false;
+            SidebarTranslation = -300;
         }
 
         [RelayCommand]
@@ -205,6 +224,14 @@ namespace MauiApp1ChatWithAI.ViewModels
         private void ToggleThreadList()
         {
             IsThreadListVisible = !IsThreadListVisible;
+        }
+
+        public void Dispose()
+        {
+            if (ThreadListViewModel != null)
+            {
+                ThreadListViewModel.ThreadSelected -= OnThreadSelected;
+            }
         }
     }
 }
