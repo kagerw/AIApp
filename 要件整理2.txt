@@ -1,16 +1,277 @@
+# システム要件
 # チャットアプリケーション 要件一覧
+
+#技術要素
+MAUI
+MVVM ToolKit
+
+##画面イメージ
+import React, { useState } from 'react';
+import { Menu, Plus, Settings, Send, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { 
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+const ChatApp = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [threads, setThreads] = useState([
+    { id: '1', title: 'General Discussion', lastMessageAt: new Date(), provider: 'Claude' },
+    { id: '2', title: 'Code Help', lastMessageAt: new Date(), provider: 'Claude' },
+  ]);
+  const [selectedThread, setSelectedThread] = useState(null);
+  const [newMessage, setNewMessage] = useState('');
+  const [isNewThreadOpen, setIsNewThreadOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  
+  // New Thread State
+  const [newThreadTitle, setNewThreadTitle] = useState('');
+  const [newThreadPrompt, setNewThreadPrompt] = useState('');
+  const [isPromptEnabled, setIsPromptEnabled] = useState(false);
+  
+  // Settings State
+  const [apiKey, setApiKey] = useState('');
+  const [defaultPrompt, setDefaultPrompt] = useState('');
+
+  return (
+    <div className="h-screen bg-gray-100 flex">
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        {/* Top Bar */}
+        <div className="bg-white border-b p-4 flex items-center gap-4">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => setIsSidebarOpen(true)}
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+          
+          <h1 className="text-xl font-bold flex-1">
+            {selectedThread ? selectedThread.title : 'Chat App'}
+          </h1>
+          
+          <Button 
+            variant="outline" 
+            onClick={() => setIsNewThreadOpen(true)}
+            className="gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            New Chat
+          </Button>
+          
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => setIsSettingsOpen(true)}
+          >
+            <Settings className="h-5 w-5" />
+          </Button>
+        </div>
+
+        {/* Messages Area */}
+        <div className="flex-1 overflow-y-auto p-4">
+          {/* Messages will be rendered here */}
+        </div>
+
+        {/* Input Area */}
+        <div className="p-4 border-t bg-white">
+          <div className="flex gap-2">
+            <Input
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Type your message..."
+              className="flex-1"
+            />
+            <Button>
+              <Send className="h-4 w-4 mr-2" />
+              Send
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Sidebar Sheet */}
+      <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
+        <SheetContent side="left" className="w-80 p-0">
+          <SheetHeader className="p-4 border-b">
+            <SheetTitle>Chat Threads</SheetTitle>
+          </SheetHeader>
+          <div className="overflow-y-auto h-full">
+            {threads.map(thread => (
+              <div
+                key={thread.id}
+                className={`p-3 border-b cursor-pointer hover:bg-gray-50 ${
+                  selectedThread?.id === thread.id ? 'bg-gray-100' : ''
+                }`}
+                onClick={() => {
+                  setSelectedThread(thread);
+                  setIsSidebarOpen(false);
+                }}
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-medium">{thread.title}</h3>
+                    <p className="text-sm text-gray-500">
+                      {new Date(thread.lastMessageAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                    {thread.provider}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* New Thread Dialog */}
+      <Dialog open={isNewThreadOpen} onOpenChange={setIsNewThreadOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Create New Chat Thread</DialogTitle>
+            <DialogDescription>
+              Set up a new conversation thread with your preferred settings.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="title">Thread Title</Label>
+              <Input
+                id="title"
+                value={newThreadTitle}
+                onChange={(e) => setNewThreadTitle(e.target.value)}
+                placeholder="Enter thread title..."
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="systemPrompt">System Prompt</Label>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsPromptEnabled(!isPromptEnabled)}
+                >
+                  {isPromptEnabled ? 'Disable' : 'Enable'}
+                </Button>
+              </div>
+              <Textarea
+                id="systemPrompt"
+                value={newThreadPrompt}
+                onChange={(e) => setNewThreadPrompt(e.target.value)}
+                placeholder="Enter system prompt..."
+                disabled={!isPromptEnabled}
+                className="h-32"
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsNewThreadOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={() => {
+              // Handle new thread creation
+              setIsNewThreadOpen(false);
+            }}>
+              Create Thread
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Settings Dialog */}
+      <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Developer Settings</DialogTitle>
+            <DialogDescription>
+              Configure API keys and default system prompts.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <Tabs defaultValue="api" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="api">API Settings</TabsTrigger>
+              <TabsTrigger value="prompts">Default Prompts</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="api" className="space-y-4 mt-4">
+              <div className="space-y-2">
+                <Label htmlFor="apiKey">Claude API Key</Label>
+                <Input
+                  id="apiKey"
+                  type="password"
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                  placeholder="Enter your API key..."
+                />
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="prompts" className="space-y-4 mt-4">
+              <div className="space-y-2">
+                <Label htmlFor="defaultPrompt">Default System Prompt</Label>
+                <Textarea
+                  id="defaultPrompt"
+                  value={defaultPrompt}
+                  onChange={(e) => setDefaultPrompt(e.target.value)}
+                  placeholder="Enter default system prompt..."
+                  className="h-48"
+                />
+              </div>
+            </TabsContent>
+          </Tabs>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsSettingsOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={() => {
+              // Handle settings save
+              setIsSettingsOpen(false);
+            }}>
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default ChatApp;
+
 
 ## 1. 基本機能
 
 ### 1.1 スレッド管理
-- スレッドの作成、取得、一覧表示、削除ができること
+- スレッドの作成、取得、一覧表示ができること
 - スレッドには以下の情報を持たせる
   - **タイトル**: 任意で設定可能
   - **プロバイダー**: デフォルトは `Claude`
   - **システムプロンプト**: 任意で設定可能、オン/オフ切り替え可能
 
 ### 1.2 メッセージ管理
-- メッセージの送信、取得、一覧表示、削除ができること
+- メッセージの送信、取得、一覧表示ができること
 - メッセージには以下の情報を持たせる
   - **内容**: テキストやコードブロック、画像などに対応
   - **ロール**: メッセージの送り手（ユーザーかプロバイダーか）
@@ -22,8 +283,8 @@
 - **MessageElement** クラス: 各メッセージの具体的な要素（テキスト、コード、画像）を管理
 
 ### 1.4 データアクセス
-- データベースに対する CR 操作を行うためのデータアクセス層
-- `IChatDataManager` インターフェースを通して、スレッドおよびメッセージの操作が可能
+- データベースに対するCR操作を行うためのデータアクセス層
+- `IChatDataManager` インターフェースを通して、スレッドおよびメッセージの作成と取得が可能
 
 ## 2. UI 構成
 
@@ -47,7 +308,7 @@
 ### 3.1 API通信
 - メッセージ送受信に使用する API への通信機能
 - 複数のプロバイダーに対応可能（例: `Claude`）
-- APIキーの管理
+- APIキーの管理のみを行い、会話履歴は管理しない
 
 ### 3.2 スレッド履歴管理
 - `ChatService` クラスを通じて、スレッドとメッセージの履歴を管理し、必要に応じて API に問い合わせ
@@ -65,15 +326,56 @@
 - スレッドごとにシステムプロンプトを設定できる
 - プロンプトの有効/無効を切り替え可能
 
-## 5. 開発・運用面での考慮事項
+# モデル
 
-### 5.1 エラーハンドリング
-- API通信エラー、データベース操作エラー、画像ファイルの読み込みエラーなど、主要なエラーケースを考慮する
+## 1. データモデル
 
-### 5.2 セキュリティ
-- APIキーの保護、データベースの暗号化などのセキュリティ対策
-- センシティブ情報の適切な管理
+```csharp
+public class ChatThread
+{
+    public string Id { get; set; }
+    public string Title { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime LastMessageAt { get; set; }
+    public string Provider { get; set; }  // デフォルトClaude
+    public string? SystemPrompt { get; set; }  // null許容
+    public bool IsSystemPromptEnabled { get; set; }
+}
 
-### 5.3 パフォーマンス最適化
-- コレクション表示の仮想化、データベースアクセスの最適化
-- メッセージの遅延読み込みやキャッシュの活用
+public class Message
+{
+    public string Id { get; set; }
+    public string ThreadId { get; set; }
+    public string Role { get; set; }
+    public DateTime Timestamp { get; set; }
+    public virtual ICollection<MessageElement> MessageElements { get; set; }
+}
+
+public class MessageElement
+{
+    public string Id { get; set; }
+    public string MessageId { get; set; }
+    public string Type { get; set; }  // Text/Code/Image/Expression
+    public string Content { get; set; }
+    public string? Language { get; set; }  // コードブロック用、null許容
+    public DateTime Timestamp { get; set; }
+    public virtual Message Message { get; set; }
+}
+
+public class MigrationHistory
+{
+    public int Id { get; set; }
+    public int Version { get; set; }
+    public string Name { get; set; }
+    public DateTime AppliedAt { get; set; }
+    public string Description { get; set; }
+    public bool IsSuccess { get; set; }
+    public string? ErrorMessage { get; set; }
+}
+ Version { get; set; }
+    public string Name { get; set; }
+    public DateTime AppliedAt { get; set; }
+    public string Description { get; set; }
+    public bool IsSuccess { get; set; }
+    public string? ErrorMessage { get; set; }
+}
