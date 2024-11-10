@@ -8,6 +8,7 @@ using Microsoft.Maui.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace MauiApp1ChatWithAI.ViewModels
 {
     public partial class MainViewModel : ViewModelBase
     {
-        private readonly IChatDataManager _dataManager;
+        private readonly IChatDataManager _chatDataManager;
         private readonly ILLMApiService _llmService;
         private readonly ChatService _chatService;
 
@@ -50,14 +51,12 @@ namespace MauiApp1ChatWithAI.ViewModels
             IChatDataManager dataManager,
             ILLMApiService llmService,
             ChatService chatService,
-            IChatDataManager chatDataManager,
             ThreadListViewModel threadListViewModel)
         {
-            _dataManager = dataManager;
+            _chatDataManager = dataManager;
             _llmService = llmService;
             _chatService = chatService;
             Title = "Chat App";
-
             // 初期データ読み込み
             LoadThreadsAsync().FireAndForgetSafeAsync();
 
@@ -85,7 +84,7 @@ namespace MauiApp1ChatWithAI.ViewModels
 
             try
             {
-                var threads = await _dataManager.GetAllThreadsAsync();
+                var threads = await _chatDataManager.GetAllThreadsAsync();
                 Threads.Clear();
                 foreach (var thread in threads)
                 {
@@ -103,11 +102,26 @@ namespace MauiApp1ChatWithAI.ViewModels
             }
         }
 
-        private void OnThreadSelected(object sender, ChatThread thread)
+        private async void OnThreadSelected(object sender, ChatThread thread)
         {
             // スレッド選択時にサイドバーを閉じる
             IsSidebarOpen = false;
             SidebarTranslation = -300;
+
+            // 会話履歴の取得
+            try
+            {
+                var messageHistory = await _chatDataManager.GetMessagesAsync(thread.Id);
+                Messages = new ObservableCollection<MessageDisplay>(
+                    messageHistory.Select(m => new MessageDisplay(m))
+                );
+            }
+            catch (Exception ex)
+            {
+                // エラーハンドリング
+                Debug.WriteLine($"Failed to load messages: {ex.Message}");
+                Messages.Clear();
+            }
         }
 
         [RelayCommand]
@@ -141,7 +155,7 @@ namespace MauiApp1ChatWithAI.ViewModels
         {
             try
             {
-                var messageList = await _dataManager.GetMessagesAsync(threadId);
+                var messageList = await _chatDataManager.GetMessagesAsync(threadId);
                 Messages.Clear();
                 foreach (var message in messageList)
                 {
@@ -172,12 +186,12 @@ namespace MauiApp1ChatWithAI.ViewModels
 
             try
             {
-                var threadId = await _dataManager.CreateThreadAsync(
+                var threadId = await _chatDataManager.CreateThreadAsync(
                     NewThreadTitle,
                     AppConstants.Providers.Claude
                 );
 
-                var thread = await _dataManager.GetThreadAsync(threadId);
+                var thread = await _chatDataManager.GetThreadAsync(threadId);
                 if (thread != null)
                 {
                     Threads.Add(thread);
@@ -202,7 +216,7 @@ namespace MauiApp1ChatWithAI.ViewModels
 
             try
             {
-                var threadList = await _dataManager.GetAllThreadsAsync();
+                var threadList = await _chatDataManager.GetAllThreadsAsync();
                 Threads.Clear();
                 foreach (var thread in threadList)
                 {

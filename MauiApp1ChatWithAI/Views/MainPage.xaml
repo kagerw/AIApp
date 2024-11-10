@@ -1,6 +1,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:views="clr-namespace:MauiApp1ChatWithAI.Views"
+             xmlns:models="clr-namespace:MauiApp1ChatWithAI.Models"
              x:Class="MauiApp1ChatWithAI.Views.MainPage">
 
     <Grid>
@@ -39,16 +40,45 @@
 
             <!-- チャットエリア -->
             <Grid Grid.Row="1">
-                <Label Text="Select a thread to start chatting"
-                       HorizontalOptions="Center"
-                       VerticalOptions="Center"/>
+                <CollectionView ItemsSource="{Binding Messages}"
+                    Margin="20">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:MessageDisplay">
+                            <Grid Padding="10">
+                                <Frame Margin="5"
+                                   Padding="10"
+                                   BorderColor="LightGray"
+                                   BackgroundColor="{Binding Role, Converter={StaticResource RoleToTextColorConverter}}"
+                                   CornerRadius="10"
+                                   HorizontalOptions="{Binding Role, Converter={StaticResource RoleToAlignmentConverter}}">
+                                    <Label Text="{Binding Content}"
+                               TextColor="White"
+                               LineBreakMode="WordWrap" />
+                                </Frame>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                    <CollectionView.EmptyView>
+                        <VerticalStackLayout HorizontalOptions="Center" 
+                               VerticalOptions="Center">
+                            <Label Text="Select a thread to start chatting"
+                       TextColor="Gray"
+                       HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </CollectionView.EmptyView>
+                </CollectionView>
             </Grid>
 
             <!-- メッセージ入力エリア -->
             <Grid Grid.Row="2"
                   Padding="16"
+                  ColumnDefinitions="*,Auto" 
+                  ColumnSpacing="10"
                   BackgroundColor="White">
-                <!-- 後で実装 -->
+                <Entry Grid.Column="0"
+                    Placeholder="Type your message..."/>
+                <Button Grid.Column="1"
+            Text="Send"/>
             </Grid>
         </Grid>
 
