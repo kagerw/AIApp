@@ -48,12 +48,12 @@
                                 <Frame Margin="5"
                                    Padding="10"
                                    BorderColor="LightGray"
-                                   BackgroundColor="{Binding Role, Converter={StaticResource RoleToTextColorConverter}}"
+                                   BackgroundColor="{Binding Role, Converter={StaticResource RoleToBackgroundConverter}}"
                                    CornerRadius="10"
                                    HorizontalOptions="{Binding Role, Converter={StaticResource RoleToAlignmentConverter}}">
                                     <Label Text="{Binding Content}"
-                               TextColor="White"
-                               LineBreakMode="WordWrap" />
+                                       TextColor="Black"
+                                       LineBreakMode="WordWrap" />
                                 </Frame>
                             </Grid>
                         </DataTemplate>
