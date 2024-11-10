@@ -34,14 +34,16 @@
                     IsEnabled="{Binding IsSystemPromptEnabled}"
                     Placeholder="システムプロンプトを入力..."/>
         </VerticalStackLayout>
-
-        <!-- ボタン -->
-        <HorizontalStackLayout Spacing="10" 
-                              HorizontalOptions="End">
+        
+        <!-- ボタングループ -->
+        <HorizontalStackLayout Grid.Row="2" 
+                          Spacing="10" 
+                          HorizontalOptions="End"
+                          Margin="0,20,0,0">
             <Button Text="キャンセル"
-                    Command="{Binding CancelCommand}"/>
+                Command="{Binding CancelCommand}"/>
             <Button Text="保存"
-                    Command="{Binding SaveCommand}"/>
+                Command="{Binding SaveCommand}"/>
         </HorizontalStackLayout>
     </VerticalStackLayout>
 </ContentPage>

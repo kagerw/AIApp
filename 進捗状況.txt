@@ -12,17 +12,17 @@
 | - スレッド選択 | ✅ ChatThread | ✅ IChatDataManager | ✅ MainViewModel | ✅ ThreadListControl |
 | **スレッド作成** |
 | - スレッド作成 | ✅ ChatThread | ✅ IChatDataManager | ✅ ThreadSettingsViewModel | ❌ ThreadSettingsPage |
-| - システムプロンプト設定 | ✅ ChatThread | ❌ ISettingsService | ✅ ThreadSettingsViewModel | ❌ ThreadSettingsPage |
+| - システムプロンプト設定 | ✅ ChatThread | ✅ ISettingsService | ✅ ThreadSettingsViewModel | ❌ ThreadSettingsPage |
 | **チャット** |
 | - メッセージ表示 | ✅ Message, MessageElement | ✅ IChatDataManager | ✅ MainViewModel | ✅ MainPage |
 | - メッセージ送信 | ✅ Message | ✅ IChatDataManager | ✅ MainViewModel | ✅ MainPage |
 | - API通信 | － | ✅ ILLMApiService | ✅ | － |
 | **開発者設定** |
-| - APIキー管理 | － | ❌ ISettingsService | 🔄 DevMenuViewModel | ❌ DevMenuPage |
-| - デフォルトプロンプト | － | ❌ ISettingsService | 🔄 DevMenuViewModel | ❌ DevMenuPage |
+| - APIキー管理 | － | ✅ ISettingsService | ✅ DevMenuViewModel | ✅ DevMenuPage |
+| - デフォルトプロンプト | － | ❌ ISettingsService?? | ?? DevMenuViewModel | ?? DevMenuPage |
 | **認証/設定保存** |
-| - APIキー保存 | － | ✅ ISecureStorage | ❌ ISettingsService | － |
-| - プロンプト保存 | ❌ | ✅ ISecureStorage | ❌ ISettingsService | － |
+| - APIキー保存 | － | ✅ ISecureStorage | ✅ ISettingsService | － |
+| - プロンプト保存 | － | ❌ ISecureStorage?? | ❌ ISettingsService?? | － |
 */
 
 ## 1. フォルダ構成

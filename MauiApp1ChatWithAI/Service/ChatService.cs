@@ -67,7 +67,7 @@ namespace MauiApp1ChatWithAI.Service
 
             // APIコール
             // memo:ここでエラーになった。なぜなら初期化をやってなかった。
-            // 現在：ここでエラーになる。なぜならAPI-Keyが未入力だから。
+            // memo：ここでエラーになった。なぜならAPI-Keyが未入力だったから。
             var response = await _llmService.GetResponseAsync(
                 message,
                 _threadMessages[threadId],
@@ -86,16 +86,16 @@ namespace MauiApp1ChatWithAI.Service
                 Role = "user",
                 Timestamp = DateTime.UtcNow,
                 MessageElements = new List<MessageElement>
-            {
-                new MessageElement
                 {
-                    Id = Guid.NewGuid().ToString(),
-                    MessageId = userMessageId,
-                    Type = "Text",
-                    Content = message,
-                    Timestamp = DateTime.UtcNow
+                    new MessageElement
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        MessageId = userMessageId,
+                        Type = "Text",
+                        Content = message,
+                        Timestamp = DateTime.UtcNow
+                    }
                 }
-            }
             };
 
             var assistantMessage = new Message
