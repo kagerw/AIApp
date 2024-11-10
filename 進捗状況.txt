@@ -1,0 +1,26 @@
+// 機能単位の実装状況マトリクス
+// ✅: 実装完了
+// 🔄: 実装中/一部実装  
+// ❌: 未実装
+// －: 不要
+
+/*
+| 機能 | Model | Service | ViewModel | View/Page |
+|------|--------|----------|------------|------------|
+| **スレッド一覧** |
+| - スレッド一覧表示 | ✅ ChatThread | ✅ IChatDataManager | ✅ ThreadListViewModel | ✅ ThreadListControl |
+| - スレッド選択 | ✅ ChatThread | ✅ IChatDataManager | ✅ MainViewModel | ✅ ThreadListControl |
+| **スレッド作成** |
+| - スレッド作成 | ✅ ChatThread | ✅ IChatDataManager | ✅ ThreadSettingsViewModel | ❌ ThreadSettingsPage |
+| - システムプロンプト設定 | ✅ ChatThread | ❌ ISettingsService | ✅ ThreadSettingsViewModel | ❌ ThreadSettingsPage |
+| **チャット** |
+| - メッセージ表示 | ✅ Message, MessageElement | ✅ IChatDataManager | ✅ MainViewModel | ✅ MainPage |
+| - メッセージ送信 | ✅ Message | ✅ IChatDataManager | ✅ MainViewModel | ✅ MainPage |
+| - API通信 | － | ✅ ILLMApiService | ✅ | － |
+| **開発者設定** |
+| - APIキー管理 | － | ❌ ISettingsService | 🔄 DevMenuViewModel | ❌ DevMenuPage |
+| - デフォルトプロンプト | － | ❌ ISettingsService | 🔄 DevMenuViewModel | ❌ DevMenuPage |
+| **認証/設定保存** |
+| - APIキー保存 | － | ✅ ISecureStorage | ❌ ISettingsService | － |
+| - プロンプト保存 | ❌ | ✅ ISecureStorage | ❌ ISettingsService | － |
+*/
