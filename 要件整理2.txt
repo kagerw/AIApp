@@ -379,3 +379,12 @@ public class MigrationHistory
     public bool IsSuccess { get; set; }
     public string? ErrorMessage { get; set; }
 }
+
+#やりたいこと
+・ローディング中にローディング表示
+・依存関係の明確化と設計書への落とし込み
+・エラー処理（通信エラーなど。Dialogで充分。だんまりはやめたい）
+・表情アプリと連携
+・コードスニペット機能
+・画像ファイルを添付
+・デフォルトプロンプトをデータベースに保存したい

@@ -75,6 +75,12 @@ namespace MauiApp1ChatWithAI.ViewModels
         }
 
         [RelayCommand]
+        private async Task Cancel() 
+        {
+            await Shell.Current.GoToAsync("..");  // 前の画面に戻る
+        }
+
+        [RelayCommand]
         private async Task Save()
         {
             try

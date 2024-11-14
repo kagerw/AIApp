@@ -90,4 +90,22 @@ public class ChatService
     public async Task<string> SendMessage(string threadId, string message);
     public List<Message> GetThreadMessages(string threadId);
 }
+
+public class DefaultSystemPrompt
+{
+    public string Id { get; set; }
+    public string Provider { get; set; }  // "Claude" etc
+    public string Content { get; set; }   // プロンプトの内容
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }  // 更新日時
+}
+
+// 将来的な編集履歴対応用（優先度低）
+public class SystemPromptHistory
+{
+    public string Id { get; set; }
+    public string DefaultSystemPromptId { get; set; }  // 親のID
+    public string Content { get; set; }
+    public DateTime CreatedAt { get; set; }
+}
 ```

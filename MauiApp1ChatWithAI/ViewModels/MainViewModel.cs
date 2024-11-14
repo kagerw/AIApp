@@ -193,6 +193,12 @@ namespace MauiApp1ChatWithAI.ViewModels
             await Shell.Current.GoToAsync("devmenu");
         }
 
+        [RelayCommand]
+        private async Task OpenThreadSettings()
+        {
+            await Shell.Current.GoToAsync(nameof(Views.ThreadSettingsPage));
+        }
+
         private async Task LoadMessages(string threadId)
         {
             try
