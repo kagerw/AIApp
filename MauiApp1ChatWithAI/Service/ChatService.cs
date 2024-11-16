@@ -54,6 +54,7 @@ namespace MauiApp1ChatWithAI.Service
             var response = await _llmService.GetResponseAsync(
                 message,
                 _threadMessages[threadId],
+                threadId,
                 systemPrompt
             );
 

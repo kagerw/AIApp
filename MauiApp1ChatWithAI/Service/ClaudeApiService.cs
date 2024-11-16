@@ -96,72 +96,86 @@ namespace MauiApp1ChatWithAI.Service
             }
         }
 
-        // GetResponseAsync は既存のまま維持
-        public async Task<string> GetResponseAsync(string message, List<Message> conversationHistory, string? systemPrompt = null)
+        public async Task<string> GetResponseAsync(string message, List<Message> conversationHistory, string threadId, string? systemPrompt = null)
         {
             if (!IsInitialized)
                 throw new InvalidOperationException("API key not initialized");
 
-            var messages = new List<object>();
-
-            if (!string.IsNullOrEmpty(systemPrompt))
+            try
             {
-                messages.Add(new { role = "system", content = systemPrompt });
-            }
+                // 会話履歴をAPI仕様に変換
+                var apiMessages = conversationHistory.Select(m => new
+                {
+                    role = m.Role,
+                    content = string.Join("\n", m.MessageElements.Select(e => e.Content))
+                }).ToList();
 
-            foreach (var msg in conversationHistory)
-            {
-                var content = string.Join("\n", msg.MessageElements.Select(e => e.Content));
-                messages.Add(new { role = msg.Role, content = content });
-            }
+                // 新しいユーザーメッセージを履歴に追加
+                apiMessages.Add(new
+                {
+                    role = "user",
+                    content = message
+                });
 
-            messages.Add(new { role = "user", content = message });
-            
-            var testMessage = new
-            {
-                model = "claude-3-5-sonnet-20241022",
-                max_tokens = 4096,
-                messages = new[] { new { role = "user", content = message } }
-            };
+                // リクエストデータを作成（SystemPromptをトップレベルに追加）
+                var testMessage = new
+                {
+                    model = "claude-3-5-sonnet-20241022",
+                    max_tokens = 4096,
+                    system = systemPrompt ?? "", // SystemPromptをトップレベルに設定
+                    messages = apiMessages      // メッセージ履歴
+                };
 
-            // ヘッダーの設定
-            var request = new HttpRequestMessage(HttpMethod.Post, ANTHROPIC_API_URL)
-            {
-                Content = new StringContent(JsonSerializer.Serialize(testMessage), Encoding.UTF8, "application/json")
-            };
+                // JSONにシリアライズ
+                string jsonContent = JsonSerializer.Serialize(testMessage, new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
+                Debug.WriteLine($"Request JSON with SystemPrompt at top-level:\n{jsonContent}");
 
-            request.Headers.Add("x-api-key", _apiKey);
-            request.Headers.Add("anthropic-version", "2023-06-01");
+                // HTTPリクエストを作成
+                var request = new HttpRequestMessage(HttpMethod.Post, ANTHROPIC_API_URL)
+                {
+                    Content = new StringContent(jsonContent, Encoding.UTF8, "application/json")
+                };
 
-            var response = await _httpClient.SendAsync(request);
+                // ヘッダーを追加
+                request.Headers.Add("x-api-key", _apiKey);
+                request.Headers.Add("anthropic-version", "2023-06-01");
 
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorBody = await response.Content.ReadAsStringAsync();
-                Debug.WriteLine($"Error Response: {errorBody}");
-                throw new HttpRequestException($"API Error: {response.StatusCode} - {errorBody}");
-            }
-            string responseBody = await response.Content.ReadAsStringAsync();
+                // リクエストを送信
+                var response = await _httpClient.SendAsync(request);
 
-            using (JsonDocument document = JsonDocument.Parse(responseBody))
-            {
-                try
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"Error Response: {errorBody}");
+                    throw new HttpRequestException($"API Error: {response.StatusCode} - {errorBody}");
+                }
+
+                // レスポンスを解析
+                string responseBody = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"Response Content:\n{responseBody}");
+
+                using (JsonDocument document = JsonDocument.Parse(responseBody))
                 {
                     var responseText = document.RootElement
-                    .GetProperty("content")
-                    .EnumerateArray()
-                    .First()
-                    .GetProperty("text")
-                    .GetString();
-                    return responseText ?? throw new Exception("Empty response from API"); ;
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"JSON Parse Error: {ex.Message}");
-                    throw new Exception($"Failed to parse API response: {ex.Message}", ex);
+                        .GetProperty("content")
+                        .EnumerateArray()
+                        .First()
+                        .GetProperty("text")
+                        .GetString();
+
+                    return responseText;
                 }
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception details: {ex}");
+                throw;
+            }
         }
+
 
         private class ClaudeResponse
         {

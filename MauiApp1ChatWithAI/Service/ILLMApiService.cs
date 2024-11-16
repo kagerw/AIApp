@@ -13,6 +13,7 @@ namespace MauiApp1ChatWithAI.Service
         Task<string> GetResponseAsync(
             string message,
             List<Message> conversationHistory,  // 履歴はChatServiceが管理
+            string threadId,
             string? systemPrompt = null         // スレッドから取得
         );
         Task InitializeAsync(string apiKey);
