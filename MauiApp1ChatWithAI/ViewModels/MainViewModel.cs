@@ -75,13 +75,6 @@ namespace MauiApp1ChatWithAI.ViewModels
         }
 
         [RelayCommand]
-        private void ToggleSidebar()
-        {
-            IsSidebarOpen = !IsSidebarOpen;
-            SidebarTranslation = IsSidebarOpen ? 0 : -300;
-        }
-
-        [RelayCommand]
         private async Task LoadThreads()
         {
             if (IsBusy) return;
@@ -130,6 +123,8 @@ namespace MauiApp1ChatWithAI.ViewModels
                 );
 
                 this.selectedThread = thread;
+                IsSidebarOpen = false;
+                SidebarTranslation = IsSidebarOpen ? 0 : -300;
 
                 Debug.WriteLine($"Loaded messages count: {messageHistory.Count}");
             }
@@ -210,6 +205,13 @@ namespace MauiApp1ChatWithAI.ViewModels
             await Shell.Current.GoToAsync(nameof(Views.ThreadSettingsPage));
         }
 
+        [RelayCommand]
+        private void ToggleThreadList()
+        {
+            IsSidebarOpen = !IsSidebarOpen;
+            SidebarTranslation = IsSidebarOpen ? 0 : -300;
+            Debug.WriteLine($"Toggling sidebar: IsSidebarOpen={IsSidebarOpen}, SidebarTranslation={SidebarTranslation}");
+        }
         private async Task LoadMessages(string threadId)
         {
             try
@@ -291,12 +293,6 @@ namespace MauiApp1ChatWithAI.ViewModels
             {
                 IsBusy = false;
             }
-        }
-
-        [RelayCommand]
-        private void ToggleThreadList()
-        {
-            IsThreadListVisible = !IsThreadListVisible;
         }
 
         public void Dispose()

@@ -1,6 +1,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:views="clr-namespace:MauiApp1ChatWithAI.Views"
+             xmlns:viewmodels="clr-namespace:MauiApp1ChatWithAI.ViewModels"
              xmlns:models="clr-namespace:MauiApp1ChatWithAI.Models"
              x:Class="MauiApp1ChatWithAI.Views.MainPage">
 
@@ -13,13 +14,13 @@
                   ColumnDefinitions="Auto,*,Auto,Auto"
                   BackgroundColor="White">
                 <Button Grid.Column="0"
-                        Command="{Binding ToggleSidebarCommand}"
-                        HeightRequest="40"
-                        WidthRequest="40"
-                        Padding="0">
+                    Command="{Binding ToggleThreadListCommand}"
+                    HeightRequest="40"
+                    WidthRequest="40"
+                    Padding="0">
                     <Button.ImageSource>
                         <FontImageSource Glyph="☰"
-                                       Color="Black"/>
+                       Color="Black"/>
                     </Button.ImageSource>
                 </Button>
 
@@ -87,20 +88,31 @@
         </Grid>
 
         <!-- サイドバー（左側に配置） -->
+        <!--<views:ThreadListView
+            x:Name="SidebarPanel"
+            WidthRequest="300"
+            HorizontalOptions="Start"
+            BackgroundColor="White"
+            TranslationX="{Binding SidebarTranslation}"
+            ThreadSelected="{Binding OnThreadSelected}"/>-->
+
+        <!-- サイドバー -->
         <Grid x:Name="SidebarPanel"
-              WidthRequest="300"
-              HorizontalOptions="Start"
-              BackgroundColor="White"
-              TranslationX="{Binding SidebarTranslation}">
-            <views:ThreadListControl 
-                BindingContext="{Binding ThreadListViewModel}"/>
+            WidthRequest="300"
+            HorizontalOptions="Start"
+            BackgroundColor="White"
+            TranslationX="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:MainViewModel}}, Path=SidebarTranslation}"
+              ZIndex="1">
+            <views:ThreadListControl />
         </Grid>
 
         <!-- オーバーレイ -->
         <!--<Grid BackgroundColor="#80000000"
-              IsVisible="{Binding IsSidebarOpen}">
+            IsVisible="{Binding IsSidebarOpen}"
+              InputTransparent="False"
+              ZIndex="1">
             <Grid.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding ToggleSidebarCommand}"/>
+                <TapGestureRecognizer Command="{Binding ToggleThreadListCommand}"/>
             </Grid.GestureRecognizers>
         </Grid>-->
     </Grid>

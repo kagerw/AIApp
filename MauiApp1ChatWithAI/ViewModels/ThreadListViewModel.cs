@@ -61,6 +61,7 @@ namespace MauiApp1ChatWithAI.ViewModels
 
         partial void OnSelectedThreadChanged(ChatThread value)
         {
+            sidebarTranslation = -300;
             threadEventAggregator1.PublishThreadSelected(value);
         }
     }

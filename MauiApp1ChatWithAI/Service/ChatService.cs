@@ -8,8 +8,6 @@ namespace MauiApp1ChatWithAI.Service
         private readonly IChatDataManager _dataManager;
         private readonly ILLMApiService _llmService;
         private readonly Dictionary<string, List<Message>> _threadMessages = new();
-        private readonly Dictionary<string, ILLMApiService> _serviceCache = new();
-        private readonly IServiceProvider _serviceProvider;
 
         public ChatService(
             IChatDataManager dataManager,
@@ -20,21 +18,6 @@ namespace MauiApp1ChatWithAI.Service
 
             var dbPath = Path.Combine(FileSystem.AppDataDirectory, "chat.db");
             Debug.WriteLine($"Database location: {dbPath}");
-        }
-        
-        private ILLMApiService GetServiceForThread(string provider)
-        {
-            if (!_serviceCache.ContainsKey(provider))
-            {
-                // ServiceProviderからサービスを取得
-                _serviceCache[provider] = provider.ToLower() switch
-                {
-                    "claude" => _serviceProvider.GetRequiredService<ClaudeApiService>(),
-                    // 他のプロバイダーを追加する場合はここに
-                    _ => throw new ArgumentException($"Unknown provider: {provider}")
-                };
-            }
-            return _serviceCache[provider];
         }
 
         public async Task LoadThread(string threadId)
