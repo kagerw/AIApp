@@ -9,19 +9,22 @@ namespace MauiApp1ChatWithAI.ViewModels
     {
         private readonly IChatDataManager _dataManager;
         private readonly ISettingsService _settingsService;
+        private readonly IThreadEventAggregator _threadEventAggregator;
 
         public ThreadSettingsViewModel(
             IChatDataManager dataManager,
-            ISettingsService settingsService)
+            ISettingsService settingsService,
+            IThreadEventAggregator threadEventAggregator)
         {
             _dataManager = dataManager;
             _settingsService = settingsService;
-            Title = "スレッド設定";
+            _threadEventAggregator = threadEventAggregator;
+
+            Title = "スレッド設定"; // ViewModelBaseのTitleプロパティを設定
 
             // プロバイダー一覧の設定
             Providers = new List<string> { AppConstants.Providers.Claude };
             SelectedProvider = Providers[0];  // デフォルト選択
-
         }
 
         [ObservableProperty]
@@ -56,12 +59,19 @@ namespace MauiApp1ChatWithAI.ViewModels
 
             try
             {
-                await _dataManager.CreateThreadAsync(
+                var threadId = await _dataManager.CreateThreadAsync(
                     ThreadTitle,
                     SelectedProvider,
                     IsSystemPromptEnabled ? SystemPrompt : null,
                     IsSystemPromptEnabled
                 );
+
+                // スレッドIDからスレッドオブジェクトを取得
+                var thread = await _dataManager.GetThreadAsync(threadId);
+                if (thread != null)
+                {
+                    _threadEventAggregator.PublishThreadCreated(thread);
+                }
 
                 await Shell.Current.GoToAsync("..");  // 前の画面に戻る
             }
@@ -77,6 +87,5 @@ namespace MauiApp1ChatWithAI.ViewModels
         {
             await Shell.Current.GoToAsync("..");  // 前の画面に戻る
         }
-
     }
 }

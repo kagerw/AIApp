@@ -27,7 +27,7 @@ namespace MauiApp1ChatWithAI
 
             // HttpClientの登録
             builder.Services.AddSingleton<HttpClient>();
-
+            builder.Services.AddSingleton<IThreadEventAggregator, ThreadEventAggregator>();
             // サービスの登録
             builder.Services.AddSingleton<ISecureStorageService, SecureStorageService>();
             builder.Services.AddSingleton<IChatDataManager, ChatDataManager>();

@@ -25,13 +25,21 @@ namespace MauiApp1ChatWithAI.ViewModels
         [ObservableProperty]
         private bool isLoading;
 
-        public event EventHandler<ChatThread> ThreadSelected;
+        private IThreadEventAggregator threadEventAggregator1;
 
-        public ThreadListViewModel(IChatDataManager chatDataManager)
+        public ThreadListViewModel(IChatDataManager chatDataManager, IThreadEventAggregator threadEventAggregator)
         {
             _chatDataManager = chatDataManager;
             threads = new ObservableCollection<ChatThread>();
             LoadThreadsAsync().FireAndForgetSafeAsync();
+            threadEventAggregator.ThreadCreated += ThreadEventAggregator_ThreadCreated;
+            threadEventAggregator1 = threadEventAggregator;
+        }
+
+        private void ThreadEventAggregator_ThreadCreated(object? sender, ChatThread thread)
+        {
+            Threads.Add(thread);
+            selectedThread = thread;
         }
 
         [RelayCommand]
@@ -53,7 +61,7 @@ namespace MauiApp1ChatWithAI.ViewModels
 
         partial void OnSelectedThreadChanged(ChatThread value)
         {
-            ThreadSelected?.Invoke(this, value);
+            threadEventAggregator1.PublishThreadSelected(value);
         }
     }
 }

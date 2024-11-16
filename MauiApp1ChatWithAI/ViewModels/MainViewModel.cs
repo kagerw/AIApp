@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MauiApp1ChatWithAI.ViewModels
@@ -45,13 +46,11 @@ namespace MauiApp1ChatWithAI.ViewModels
         [ObservableProperty]
         private bool isSidebarOpen;
 
-        public ThreadListViewModel ThreadListViewModel { get; }
-
         public MainViewModel(
             IChatDataManager dataManager,
             ILLMApiService llmService,
             ChatService chatService,
-            ThreadListViewModel threadListViewModel)
+            IThreadEventAggregator threadEventAggregator)
         {
             _chatDataManager = dataManager;
             _llmService = llmService;
@@ -60,8 +59,14 @@ namespace MauiApp1ChatWithAI.ViewModels
             // 初期データ読み込み
             LoadThreadsAsync().FireAndForgetSafeAsync();
 
-            ThreadListViewModel = threadListViewModel;
-            ThreadListViewModel.ThreadSelected += OnThreadSelected;
+            threadEventAggregator.ThreadSelected += OnThreadSelected;
+            threadEventAggregator.ThreadCreated += OnThreadCreated;
+        }
+
+        private async void OnThreadCreated(object? sender, ChatThread thread)
+        {
+            // これを追加した。
+            await _chatService.LoadThread(thread.Id);
         }
 
         public override async Task InitializeAsync()
@@ -124,6 +129,8 @@ namespace MauiApp1ChatWithAI.ViewModels
                     messageHistory.Select(m => new MessageDisplay(m))
                 );
 
+                this.selectedThread = thread;
+
                 Debug.WriteLine($"Loaded messages count: {messageHistory.Count}");
             }
             catch (Exception ex)
@@ -131,6 +138,8 @@ namespace MauiApp1ChatWithAI.ViewModels
                 // エラーハンドリング
                 Debug.WriteLine($"Failed to load messages: {ex.Message}");
                 Messages.Clear();
+                await Shell.Current.DisplayAlert("エラー",
+                    $"スレッドの変更に失敗しました: {ex.Message}", "OK");
             }
         }
 
@@ -149,7 +158,7 @@ namespace MauiApp1ChatWithAI.ViewModels
                 var userMessageObject = new Message
                 {
                     Id = Guid.NewGuid().ToString(),
-                    ThreadId = ThreadListViewModel.SelectedThread.Id,
+                    ThreadId = this.selectedThread.Id,
                     Role = "user",
                     Timestamp = DateTime.UtcNow,
                     MessageElements = new List<MessageElement>
@@ -168,11 +177,11 @@ namespace MauiApp1ChatWithAI.ViewModels
                 // メッセージ送信と応答取得
                 // メモ：ここでエラーになった、なぜなら初期化をやってなかった。
                 var messageId = await _chatService.SendMessage(
-                    ThreadListViewModel.SelectedThread.Id,
+                    this.selectedThread.Id,
                     userMessage
                 );
 
-                var messages = _chatService.GetThreadMessages(ThreadListViewModel.SelectedThread.Id);
+                var messages = _chatService.GetThreadMessages(this.selectedThread.Id);
                 var responseMessage = messages.LastOrDefault();
 
                 if (responseMessage != null)
@@ -184,6 +193,8 @@ namespace MauiApp1ChatWithAI.ViewModels
             {
                 Debug.WriteLine($"Failed to send message: {ex.Message}");
                 // TODO: エラー表示
+                await Shell.Current.DisplayAlert("エラー",
+                    $"APIKeyが未登録です: {ex.Message}", "OK");
             }
         }
 
@@ -290,10 +301,6 @@ namespace MauiApp1ChatWithAI.ViewModels
 
         public void Dispose()
         {
-            if (ThreadListViewModel != null)
-            {
-                ThreadListViewModel.ThreadSelected -= OnThreadSelected;
-            }
         }
     }
 }
