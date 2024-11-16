@@ -73,17 +73,21 @@
             </Grid>
 
             <!-- メッセージ入力エリア -->
+            <!-- メッセージ入力エリア -->
             <Grid Grid.Row="2"
-                  Padding="16"
-                  ColumnDefinitions="*,Auto" 
-                  ColumnSpacing="10"
-                  BackgroundColor="White">
-                <Entry Grid.Column="0"
-                   Text="{Binding MessageInput}"
-                   Placeholder="Type your message..."/>
-                <Button Grid.Column="1"
-                    Text="Send"
-                    Command="{Binding SendMessageCommand}"/>
+                Padding="16"
+                ColumnDefinitions="*,Auto" 
+                ColumnSpacing="10"
+                BackgroundColor="White">
+                        <Editor Grid.Column="0"
+                            Text="{Binding MessageInput}"
+                            Placeholder="Type your message..."
+                            AutoSize="TextChanges"
+                            MaximumHeightRequest="100"/>
+                        <Button Grid.Column="1"
+                            Text="Send"
+                            VerticalOptions="End"
+                            Command="{Binding SendMessageCommand}"/>
             </Grid>
         </Grid>
 

@@ -46,6 +46,8 @@ namespace MauiApp1ChatWithAI.ViewModels
         [ObservableProperty]
         private bool isSidebarOpen;
 
+        private IThreadEventAggregator threadEventAggregator1;
+
         public MainViewModel(
             IChatDataManager dataManager,
             ILLMApiService llmService,
@@ -61,12 +63,14 @@ namespace MauiApp1ChatWithAI.ViewModels
 
             threadEventAggregator.ThreadSelected += OnThreadSelected;
             threadEventAggregator.ThreadCreated += OnThreadCreated;
+            threadEventAggregator1 = threadEventAggregator;
         }
 
         private async void OnThreadCreated(object? sender, ChatThread thread)
         {
             // これを追加した。
             await _chatService.LoadThread(thread.Id);
+            this.selectedThread = thread;
         }
 
         public override async Task InitializeAsync()
@@ -211,6 +215,11 @@ namespace MauiApp1ChatWithAI.ViewModels
             IsSidebarOpen = !IsSidebarOpen;
             SidebarTranslation = IsSidebarOpen ? 0 : -300;
             Debug.WriteLine($"Toggling sidebar: IsSidebarOpen={IsSidebarOpen}, SidebarTranslation={SidebarTranslation}");
+
+            if (IsSidebarOpen)
+            {
+                threadEventAggregator1.PublishThreadsNeedReorder();
+            }
         }
         private async Task LoadMessages(string threadId)
         {
