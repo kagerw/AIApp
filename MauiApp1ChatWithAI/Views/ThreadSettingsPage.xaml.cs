@@ -2,9 +2,9 @@ using MauiApp1ChatWithAI.ViewModels;
 
 namespace MauiApp1ChatWithAI.Views;
 
-public partial class ThreadSettingsPage : ContentPage
+public partial class ThreadCreatePage : ContentPage
 {
-    public ThreadSettingsPage(ThreadSettingsViewModel viewModel)
+    public ThreadCreatePage(ThreadSettingsViewModel viewModel)
     {
         InitializeComponent();
         BindingContext = viewModel;

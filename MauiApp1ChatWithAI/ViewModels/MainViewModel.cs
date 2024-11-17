@@ -177,7 +177,7 @@ namespace MauiApp1ChatWithAI.ViewModels
         [RelayCommand]
         private async Task OpenThreadSettings()
         {
-            await Shell.Current.GoToAsync(nameof(Views.ThreadSettingsPage));
+            await Shell.Current.GoToAsync(nameof(Views.ThreadCreatePage));
         }
 
         [RelayCommand]
