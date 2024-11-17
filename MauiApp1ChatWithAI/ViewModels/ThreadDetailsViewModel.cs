@@ -25,12 +25,16 @@ namespace MauiApp1ChatWithAI.ViewModels
         [ObservableProperty]
         private bool isLoading;
 
+        private IChatDataManager _dataManager;
+
         public ThreadDetailsViewModel(
             IChatDataManager chatDataManager,
-            IThreadEventAggregator threadEventAggregator)
+            IThreadEventAggregator threadEventAggregator,
+            IChatDataManager dataManager)
         {
             _chatDataManager = chatDataManager;
             _threadEventAggregator = threadEventAggregator;
+            _dataManager = dataManager;
         }
 
         public override async Task InitializeAsync()
@@ -87,6 +91,36 @@ namespace MauiApp1ChatWithAI.ViewModels
             {
                 await Shell.Current.DisplayAlert("エラー",
                     $"クリップボードへのコピーに失敗しました: {ex.Message}", "OK");
+                Debug.WriteLine($"Error copying to clipboard: {ex.Message}");
+            }
+        }
+
+        [RelayCommand]
+        private async Task DeleeteThread()
+        {
+            try
+            {
+                if (CurrentThread?.Id != null)
+                {
+                    // 削除前に確認ダイアログを表示
+                    bool answer = await Shell.Current.DisplayAlert(
+                        "確認",
+                        "このスレッドを削除してもよろしいですか？",
+                        "はい",
+                        "いいえ"
+                    );
+                    if (answer)
+                    {
+                        await _dataManager.DeleteThreadAsync(currentThread.Id);
+                        await Shell.Current.DisplayAlert("成功", "スレッドを削除しました。", "OK");
+                        await Shell.Current.GoToAsync("..");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("エラー",
+                   $"スレッド削除に失敗しました: {ex.Message}", "OK");
                 Debug.WriteLine($"Error copying to clipboard: {ex.Message}");
             }
         }
