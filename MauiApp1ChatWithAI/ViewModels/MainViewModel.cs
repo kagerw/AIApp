@@ -16,9 +16,6 @@ namespace MauiApp1ChatWithAI.ViewModels
         private readonly ChatService _chatService;
 
         [ObservableProperty]
-        private ObservableCollection<ChatThread> threads = new();
-
-        [ObservableProperty]
         private string messageInput = string.Empty;
 
         [ObservableProperty]
@@ -58,7 +55,6 @@ namespace MauiApp1ChatWithAI.ViewModels
             _chatService = chatService;
             Title = "Chat App";
             // 初期データ読み込み
-            LoadThreadsAsync().FireAndForgetSafeAsync();
 
             threadEventAggregator.ThreadSelected += OnThreadSelected;
             threadEventAggregator.ThreadCreated += OnThreadCreated;
@@ -74,38 +70,6 @@ namespace MauiApp1ChatWithAI.ViewModels
             IsThreadSelected = true;
         }
 
-        public override async Task InitializeAsync()
-        {
-            await LoadThreads();
-        }
-
-        [RelayCommand]
-        private async Task LoadThreads()
-        {
-            if (IsBusy) return;
-            IsBusy = true;
-
-            try
-            {
-                var threads = await _chatDataManager.GetAllThreadsAsync();
-                Threads.Clear();
-                foreach (var thread in threads)
-                {
-                    Threads.Add(thread);
-                }
-            }
-            catch (Exception ex)
-            {
-                await Shell.Current.DisplayAlert("エラー",
-                    $"スレッドの読み込みに失敗しました: {ex.Message}", "OK");
-            }
-            finally
-            {
-                IsBusy = false;
-            }
-        }
-
-        [RelayCommand]
         private async Task OpenDevMenu()
         {
             await Shell.Current.GoToAsync(nameof(Views.DevMenuPage));
@@ -261,63 +225,6 @@ namespace MauiApp1ChatWithAI.ViewModels
             if (value != null)
             {
                 LoadMessages(value.Id).FireAndForgetSafeAsync();
-            }
-        }
-
-
-        [RelayCommand]
-        private async Task CreateThread()
-        {
-            if (IsBusy) return;
-            IsBusy = true;
-
-            try
-            {
-                var threadId = await _chatDataManager.CreateThreadAsync(
-                    NewThreadTitle,
-                    AppConstants.Providers.Claude
-                );
-
-                var thread = await _chatDataManager.GetThreadAsync(threadId);
-                if (thread != null)
-                {
-                    Threads.Add(thread);
-                    NewThreadTitle = string.Empty;  // 入力欄をクリア
-                }
-            }
-            catch (Exception ex)
-            {
-                await Shell.Current.DisplayAlert("エラー",
-                    $"スレッドの作成に失敗しました: {ex.Message}", "OK");
-            }
-            finally
-            {
-                IsBusy = false;
-            }
-        }
-
-        private async Task LoadThreadsAsync()
-        {
-            if (IsBusy) return;
-            IsBusy = true;
-
-            try
-            {
-                var threadList = await _chatDataManager.GetAllThreadsAsync();
-                Threads.Clear();
-                foreach (var thread in threadList)
-                {
-                    Threads.Add(thread);
-                }
-            }
-            catch (Exception ex)
-            {
-                await Shell.Current.DisplayAlert("エラー",
-                    $"スレッドの読み込みに失敗しました: {ex.Message}", "OK");
-            }
-            finally
-            {
-                IsBusy = false;
             }
         }
 
