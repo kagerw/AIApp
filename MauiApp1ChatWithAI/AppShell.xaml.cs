@@ -9,7 +9,6 @@ namespace MauiApp1ChatWithAI
             InitializeComponent();
             Routing.RegisterRoute(nameof(Views.DevMenuPage), typeof(Views.DevMenuPage));
             Routing.RegisterRoute(nameof(Views.ThreadCreatePage), typeof(Views.ThreadCreatePage));
-            Routing.RegisterRoute(nameof(Views.ThreadDetailsPage), typeof(Views.ThreadDetailsPage));
             Routing.RegisterRoute(nameof(Views.ThreadEditPage), typeof(Views.ThreadEditPage));
         }
     }
