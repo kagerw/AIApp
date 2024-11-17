@@ -13,7 +13,7 @@ using System.Diagnostics;
 
 namespace MauiApp1ChatWithAI.ViewModels
 {
-    public partial class ThreadListViewModel : ObservableObject
+    public partial class ThreadListViewModel : ObservableObject, IDisposable
     {
         private readonly IChatDataManager _chatDataManager;
 
@@ -86,6 +86,12 @@ namespace MauiApp1ChatWithAI.ViewModels
             Threads = new ObservableCollection<ChatThread>(
                 Threads.OrderByDescending(t => t.LastMessageAt)
             );
+        }
+
+        public void Dispose()
+        {
+            threadEventAggregator1.ThreadCreated -= ThreadEventAggregator_ThreadCreated;
+            threadEventAggregator1.ThreadsNeedReorder -= ThreadEventAggregator_ThreadsNeedReorder;  // 追加
         }
     }
 }

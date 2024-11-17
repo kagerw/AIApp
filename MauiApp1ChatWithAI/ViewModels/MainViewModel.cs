@@ -323,6 +323,8 @@ namespace MauiApp1ChatWithAI.ViewModels
 
         public void Dispose()
         {
+            threadEventAggregator1.ThreadSelected -= OnThreadSelected;
+            threadEventAggregator1.ThreadCreated -= OnThreadCreated;
         }
     }
 }
