@@ -23,7 +23,10 @@ namespace MauiApp1ChatWithAI
                 });
             var dbPath = Path.Combine(FileSystem.AppDataDirectory, "chat.db");
             builder.Services.AddDbContext<ChatDbContext>(options =>
-                options.UseSqlite($"Data Source={dbPath}"));
+            {
+                var dbPath = Path.Combine(FileSystem.AppDataDirectory, "chat.db");
+                options.UseSqlite($"Data Source={dbPath}");
+            });
 
             // HttpClientの登録
             builder.Services.AddSingleton<HttpClient>();

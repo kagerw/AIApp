@@ -19,8 +19,7 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Grid Padding="16,12"
-                        RowDefinitions="Auto,Auto"
-                        BackgroundColor="White">
+                        RowDefinitions="Auto,Auto">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup Name="CommonStates">
                                 <VisualState Name="Normal" />

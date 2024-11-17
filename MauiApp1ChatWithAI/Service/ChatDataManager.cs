@@ -40,9 +40,18 @@ namespace MauiApp1ChatWithAI.Service
                 LastMessageAt = DateTime.UtcNow
             };
 
+            using var transaction = await _context.Database.BeginTransactionAsync();
             _context.Threads.Add(thread);
-            await _context.SaveChangesAsync();
-            return thread.Id;
+            try
+            {
+                await _context.SaveChangesAsync();
+                return thread.Id;
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
         }
 
         public async Task<ChatThread?> GetThreadAsync(string threadId)
