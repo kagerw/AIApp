@@ -78,12 +78,12 @@
                 ColumnDefinitions="*,Auto" 
                 ColumnSpacing="10"
                 BackgroundColor="White">
-                        <Editor Grid.Column="0"
+                <Editor Grid.Column="0"
                             Text="{Binding MessageInput}"
                             Placeholder="Type your message..."
                             AutoSize="TextChanges"
                             MaximumHeightRequest="100"/>
-                        <Button Grid.Column="1"
+                <Button Grid.Column="1"
                             Text="Send"
                             VerticalOptions="End"
                             Command="{Binding SendMessageCommand}"/>
@@ -106,6 +106,24 @@
             TranslationX="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:MainViewModel}}, Path=SidebarTranslation}"
               ZIndex="1">
             <views:ThreadListControl />
+        </Grid>
+
+        <!-- ローディングインジケーター -->
+        <Grid ZIndex="999" 
+              IsVisible="{Binding IsLoading}"
+              BackgroundColor="#80000000">
+            <VerticalStackLayout VerticalOptions="Center" 
+                               HorizontalOptions="Center"
+                               Spacing="10">
+                <ActivityIndicator IsVisible="{Binding IsLoading}"
+                                 IsRunning="{Binding IsLoading}"
+                                 Color="White"
+                                 HeightRequest="50"
+                                 WidthRequest="50"/>
+                <Label Text="Loading..."
+                       TextColor="White"
+                       HorizontalOptions="Center"/>
+            </VerticalStackLayout>
         </Grid>
     </Grid>
 </ContentPage>

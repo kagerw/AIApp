@@ -89,16 +89,16 @@ namespace MauiApp1ChatWithAI.Service
                 Role = "assistant",
                 Timestamp = DateTime.UtcNow,
                 MessageElements = new List<MessageElement>
-            {
-                new MessageElement
                 {
-                    Id = Guid.NewGuid().ToString(),
-                    MessageId = assistantMessageId,
-                    Type = "Text",
-                    Content = response,
-                    Timestamp = DateTime.UtcNow
+                    new MessageElement
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        MessageId = assistantMessageId,
+                        Type = "Text",
+                        Content = response,
+                        Timestamp = DateTime.UtcNow
+                    }
                 }
-            }
             };
 
             _threadMessages[threadId].Add(userMessage);

@@ -39,6 +39,9 @@ namespace MauiApp1ChatWithAI.ViewModels
         [ObservableProperty]
         private bool isSidebarOpen;
 
+        [ObservableProperty]
+        private bool isLoading;
+
         private IThreadEventAggregator threadEventAggregator1;
 
         public MainViewModel(
@@ -141,6 +144,7 @@ namespace MauiApp1ChatWithAI.ViewModels
             if (string.IsNullOrWhiteSpace(MessageInput))
                 return;
 
+            IsLoading = true;
             try
             {
                 var userMessage = MessageInput;
@@ -187,6 +191,10 @@ namespace MauiApp1ChatWithAI.ViewModels
                 // TODO: エラー表示
                 await Shell.Current.DisplayAlert("エラー",
                     $"APIKeyが未登録です: {ex.Message}", "OK");
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
 
