@@ -78,24 +78,6 @@ namespace MauiApp1ChatWithAI.ViewModels
             await Shell.Current.GoToAsync("..");
         }
 
-        [RelayCommand]
-        private async Task CopySystemPrompt()
-        {
-            if (string.IsNullOrEmpty(CurrentThread?.SystemPrompt))
-                return;
-
-            try
-            {
-                await Clipboard.SetTextAsync(CurrentThread.SystemPrompt);
-                await Shell.Current.DisplayAlert("成功", "システムプロンプトをクリップボードにコピーしました", "OK");
-            }
-            catch (Exception ex)
-            {
-                await Shell.Current.DisplayAlert("エラー",
-                    $"クリップボードへのコピーに失敗しました: {ex.Message}", "OK");
-                Debug.WriteLine($"Error copying to clipboard: {ex.Message}");
-            }
-        }
 
         [RelayCommand]
         private async Task EditThread()

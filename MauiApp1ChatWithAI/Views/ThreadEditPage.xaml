@@ -28,13 +28,27 @@
 
             <!-- システムプロンプト表示 (読み取り専用) -->
             <VerticalStackLayout Spacing="5">
-                <Label Text="システムプロンプト"
-                       Style="{StaticResource FormLabelStyle}"/>
+                <Grid ColumnDefinitions="*, Auto">
+                    <Label Text="システムプロンプト"
+                           Style="{StaticResource FormLabelStyle}"
+                           VerticalOptions="Center"/>
+                    <Button Grid.Column="1"
+                            Text="コピー"
+                            Command="{Binding CopySystemPromptCommand}"
+                            IsEnabled="{Binding HasSystemPrompt}"
+                            HeightRequest="35"
+                            WidthRequest="80"
+                            Margin="0,0,0,5"/>
+                </Grid>
                 <Frame Padding="10" 
                        BorderColor="LightGray"
                        HasShadow="False">
-                    <Label Text="{Binding SystemPrompt}"
-                           TextColor="Gray"/>
+                    <ScrollView HeightRequest="150"
+                              Orientation="Vertical">
+                        <Label Text="{Binding SystemPrompt}"
+                               TextColor="Gray"
+                               LineBreakMode="WordWrap"/>
+                    </ScrollView>
                 </Frame>
             </VerticalStackLayout>
 
