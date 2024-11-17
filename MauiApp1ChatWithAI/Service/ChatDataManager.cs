@@ -200,6 +200,42 @@ namespace MauiApp1ChatWithAI.Service
                 throw new InvalidOperationException($"Failed to delete thread: {ex.Message}", ex);
             }
         }
+
+        public async Task<bool> UpdateThreadTitleAsync(string threadId, string newTitle)
+        {
+            if (string.IsNullOrEmpty(threadId))
+                throw new ArgumentException("ThreadId cannot be empty", nameof(threadId));
+            if (string.IsNullOrEmpty(newTitle))
+                throw new ArgumentException("New title cannot be empty", nameof(newTitle));
+
+            // トランザクション開始
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                // スレッドの存在確認と取得
+                var thread = await _context.Threads.FindAsync(threadId);
+                if (thread == null)
+                    return false;
+
+                // タイトルを更新
+                thread.Title = newTitle;
+
+                // 変更をデータベースに保存
+                await _context.SaveChangesAsync();
+
+                // トランザクションのコミット
+                await transaction.CommitAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // エラーが発生した場合はロールバック
+                await transaction.RollbackAsync();
+                throw new InvalidOperationException($"Failed to update thread title: {ex.Message}", ex);
+            }
+        }
     }
 
 }
