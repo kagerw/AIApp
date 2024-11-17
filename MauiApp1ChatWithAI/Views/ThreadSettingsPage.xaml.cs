@@ -4,7 +4,7 @@ namespace MauiApp1ChatWithAI.Views;
 
 public partial class ThreadCreatePage : ContentPage
 {
-    public ThreadCreatePage(ThreadSettingsViewModel viewModel)
+    public ThreadCreatePage(ThreadCreateViewModel viewModel)
     {
         InitializeComponent();
         BindingContext = viewModel;

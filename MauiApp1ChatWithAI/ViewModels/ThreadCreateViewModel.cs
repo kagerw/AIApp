@@ -5,13 +5,13 @@ using MauiApp1ChatWithAI.Service;
 
 namespace MauiApp1ChatWithAI.ViewModels
 {
-    public partial class ThreadSettingsViewModel : ViewModelBase
+    public partial class ThreadCreateViewModel : ViewModelBase
     {
         private readonly IChatDataManager _dataManager;
         private readonly ISettingsService _settingsService;
         private readonly IThreadEventAggregator _threadEventAggregator;
 
-        public ThreadSettingsViewModel(
+        public ThreadCreateViewModel(
             IChatDataManager dataManager,
             ISettingsService settingsService,
             IThreadEventAggregator threadEventAggregator)
