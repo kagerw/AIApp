@@ -5,6 +5,8 @@
 *.sln.docstates
 *.userprefs
 
+*.link
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
@@ -67,3 +69,5 @@ packages/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+/*.lnk
+/*.pl

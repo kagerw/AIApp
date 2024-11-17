@@ -1,4 +1,3 @@
-<!-- Controls/ThreadListControl.xaml -->
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MauiApp1ChatWithAI.Views.ThreadListControl"
@@ -11,7 +10,6 @@
                    FontSize="20"
                    FontAttributes="Bold"/>
         </StackLayout>
-
         <!-- スレッド一覧 -->
         <CollectionView Grid.Row="1"
                        ItemsSource="{Binding Threads}"
@@ -35,15 +33,11 @@
                         <Label Grid.Row="0"
                                Text="{Binding Title}"
                                FontSize="16"/>
-
-                        <!-- 最終更新日時とプロバイダー -->
+                        <!-- プロバイダー、詳細ボタン、最終更新日時 -->
                         <Grid Grid.Row="1"
-                              ColumnDefinitions="*,Auto">
-                            <Label Grid.Column="0"
-                                   Text="{Binding LastMessageAt, StringFormat='{0:g}'}"
-                                   FontSize="12"
-                                   TextColor="Gray"/>
-                            <Border Grid.Column="1"
+                              ColumnDefinitions="Auto,Auto,*">
+                            <!-- プロバイダー -->
+                            <Border Grid.Column="0"
                                     Padding="6,2"
                                     BackgroundColor="#E3F2FD"
                                     StrokeShape="RoundRectangle 4">
@@ -51,19 +45,25 @@
                                        FontSize="12"
                                        TextColor="#1976D2"/>
                             </Border>
+                            <!-- 詳細ボタン -->
+                            <Button Grid.Column="1"
+                                Text="詳細"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ThreadListViewModel}}, Path=GoToThreadDetailsCommand}"
+                                CommandParameter="{Binding .}"
+                                Padding="10,5"
+                                Margin="8,0,0,0"/>
+                            <!-- 最終更新日時 -->
+                            <Label Grid.Column="2"
+                                   Text="{Binding LastMessageAt, StringFormat='{0:g}'}"
+                                   FontSize="12"
+                                   TextColor="Gray"
+                                   HorizontalOptions="End"
+                                   VerticalOptions="Center"/>
                         </Grid>
-                        <!-- スレッド詳細ボタン -->
-                        <Button Grid.Row="2"
-                            Text="スレッド詳細"
-                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ThreadListViewModel}}, Path=GoToThreadDetailsCommand}"
-                            CommandParameter="{Binding .}"
-                            Padding="10,5"
-                            HorizontalOptions="End"/>
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-
         <!-- ローディング表示 -->
         <ActivityIndicator Grid.Row="1"
                           IsVisible="{Binding IsLoading}"
