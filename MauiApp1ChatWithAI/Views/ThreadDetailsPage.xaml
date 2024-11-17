@@ -1,18 +1,63 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converter="clr-namespace:MauiApp1ChatWithAI.Converter"
              x:Class="MauiApp1ChatWithAI.Views.ThreadDetailsPage"
              Title="ThreadDetailsPage">
-    <VerticalStackLayout Padding="20" Spacing="20">
-        <!-- スレッド詳細コンテンツ -->
-        <VerticalStackLayout Spacing="5">
-            <!-- ここに既存のスレッド詳細の内容を配置 -->
-        </VerticalStackLayout>
+    <ContentPage.Resources>
+        <converter:InverseBoolConverter x:Key="InverseBoolConverter"/>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView Grid.Row="0">
+            <VerticalStackLayout Padding="20" Spacing="20">
+                <!-- スレッド情報 -->
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="スレッドタイトル"
+                           Style="{StaticResource FormLabelStyle}"/>
+                    <Label Text="{Binding CurrentThread.Title}"
+                           Style="{StaticResource BodyLabelStyle}"/>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="プロバイダー"
+                           Style="{StaticResource FormLabelStyle}"/>
+                    <Label Text="{Binding CurrentThread.Provider}"
+                           Style="{StaticResource BodyLabelStyle}"/>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="システムプロンプト"
+                           Style="{StaticResource FormLabelStyle}"/>
+                    <Label Text="{Binding CurrentThread.SystemPrompt}"
+                           IsVisible="{Binding HasSystemPrompt}"
+                           Style="{StaticResource BodyLabelStyle}"/>
+                    <Label Text="設定なし"
+                           IsVisible="{Binding HasSystemPrompt, Converter={StaticResource InverseBoolConverter}}"
+                           Style="{StaticResource BodyLabelStyle}"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"/>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="作成日時"
+                           Style="{StaticResource FormLabelStyle}"/>
+                    <Label Text="{Binding CurrentThread.CreatedAt, StringFormat='{0:yyyy/MM/dd HH:mm}'}"
+                           Style="{StaticResource BodyLabelStyle}"/>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- 読み込み中インジケーター -->
+        <ActivityIndicator Grid.Row="0"
+                          IsVisible="{Binding IsLoading}"
+                          IsRunning="{Binding IsLoading}"
+                          HorizontalOptions="Center"
+                          VerticalOptions="Center"/>
 
         <!-- 戻るボタン -->
-        <Button Text="戻る"
+        <Button Grid.Row="1"
+                Text="戻る"
                 Command="{Binding GoBackCommand}"
-                HorizontalOptions="Start"
-                Margin="0,20,0,0"/>
-    </VerticalStackLayout>
+                Margin="20"/>
+    </Grid>
 </ContentPage>
