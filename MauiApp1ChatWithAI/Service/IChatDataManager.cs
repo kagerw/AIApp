@@ -82,6 +82,17 @@ namespace MauiApp1ChatWithAI.Service
         /// <exception cref="ArgumentException">threadIdが空の場合にスローされます。</exception>
         /// <exception cref="InvalidOperationException">指定されたスレッドが存在しない場合にスローされます。</exception>
         Task<List<Message>> GetMessagesAsync(string threadId);
+
+        /// <summary>
+        /// スレッドとその関連データ（メッセージ、メッセージ要素）を削除します。
+        /// </summary>
+        /// <param name="threadId">削除対象のスレッドID</param>
+        /// <returns>
+        /// 削除が成功した場合はtrue、スレッドが存在しない場合はfalseを返します。
+        /// </returns>
+        /// <exception cref="ArgumentException">threadIdが空の場合にスローされます。</exception>
+        /// <exception cref="InvalidOperationException">データベース操作中にエラーが発生した場合にスローされます。</exception>
+        Task<bool> DeleteThreadAsync(string threadId);
     }
 
 }

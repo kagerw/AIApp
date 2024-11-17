@@ -140,6 +140,66 @@ namespace MauiApp1ChatWithAI.Service
                 .OrderBy(m => m.Timestamp)
                 .ToListAsync();
         }
+
+        /// <summary>
+        /// スレッドとその関連データ（メッセージ、メッセージ要素）を削除します。
+        /// </summary>
+        /// <param name="threadId">削除対象のスレッドID</param>
+        /// <returns>
+        /// 削除が成功した場合はtrue、スレッドが存在しない場合はfalseを返します。
+        /// </returns>
+        /// <exception cref="ArgumentException">threadIdが空の場合にスローされます。</exception>
+        /// <exception cref="InvalidOperationException">データベース操作中にエラーが発生した場合にスローされます。</exception>
+        public async Task<bool> DeleteThreadAsync(string threadId)
+        {
+            if (string.IsNullOrEmpty(threadId))
+                throw new ArgumentException("ThreadId cannot be empty", nameof(threadId));
+
+            // トランザクション開始
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                // スレッドの存在確認
+                var thread = await _context.Threads.FindAsync(threadId);
+                if (thread == null)
+                    return false;
+
+                // 関連するメッセージを取得
+                var messages = await _context.Messages
+                    .Where(m => m.ThreadId == threadId)
+                    .ToListAsync();
+
+                // メッセージIDのリストを作成
+                var messageIds = messages.Select(m => m.Id).ToList();
+
+                // 関連するメッセージ要素を取得して削除
+                var elements = await _context.MessageElements
+                    .Where(e => messageIds.Contains(e.MessageId))
+                    .ToListAsync();
+                _context.MessageElements.RemoveRange(elements);
+
+                // メッセージを削除
+                _context.Messages.RemoveRange(messages);
+
+                // スレッドを削除
+                _context.Threads.Remove(thread);
+
+                // 変更をデータベースに保存
+                await _context.SaveChangesAsync();
+
+                // トランザクションのコミット
+                await transaction.CommitAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // エラーが発生した場合はロールバック
+                await transaction.RollbackAsync();
+                throw new InvalidOperationException($"Failed to delete thread: {ex.Message}", ex);
+            }
+        }
     }
 
 }
