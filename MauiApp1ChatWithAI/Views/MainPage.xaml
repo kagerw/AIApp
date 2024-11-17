@@ -74,19 +74,37 @@
 
             <!-- メッセージ入力エリア -->
             <Grid Grid.Row="2"
-                Padding="16"
-                ColumnDefinitions="*,Auto" 
-                ColumnSpacing="10"
-                BackgroundColor="White">
+                  Padding="16"
+                  ColumnDefinitions="*,Auto" 
+                  ColumnSpacing="10"
+                  BackgroundColor="White">
                 <Editor Grid.Column="0"
-                            Text="{Binding MessageInput}"
-                            Placeholder="Type your message..."
-                            AutoSize="TextChanges"
-                            MaximumHeightRequest="100"/>
+                Text="{Binding MessageInput}"
+                Placeholder="Select a thread to start chatting..."
+                AutoSize="TextChanges"
+                MaximumHeightRequest="100"
+                IsEnabled="{Binding IsThreadSelected}">
+                    <Editor.Triggers>
+                        <DataTrigger TargetType="Editor"
+                            Binding="{Binding IsThreadSelected}"
+                            Value="False">
+                            <Setter Property="BackgroundColor" Value="#F0F0F0"/>
+                        </DataTrigger>
+                    </Editor.Triggers>
+                </Editor>
                 <Button Grid.Column="1"
-                            Text="Send"
-                            VerticalOptions="End"
-                            Command="{Binding SendMessageCommand}"/>
+                Text="Send"
+                VerticalOptions="End"
+                Command="{Binding SendMessageCommand}"
+                IsEnabled="{Binding IsThreadSelected}">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button"
+                            Binding="{Binding IsThreadSelected}"
+                            Value="False">
+                            <Setter Property="Opacity" Value="0.5"/>
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
             </Grid>
         </Grid>
 

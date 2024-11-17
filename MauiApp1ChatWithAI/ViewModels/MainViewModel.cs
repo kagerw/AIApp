@@ -42,6 +42,9 @@ namespace MauiApp1ChatWithAI.ViewModels
         [ObservableProperty]
         private bool isLoading;
 
+        [ObservableProperty]
+        private bool isThreadSelected;
+
         private IThreadEventAggregator threadEventAggregator1;
 
         public MainViewModel(
@@ -60,6 +63,7 @@ namespace MauiApp1ChatWithAI.ViewModels
             threadEventAggregator.ThreadSelected += OnThreadSelected;
             threadEventAggregator.ThreadCreated += OnThreadCreated;
             threadEventAggregator1 = threadEventAggregator;
+            IsThreadSelected = false;
         }
 
         private async void OnThreadCreated(object? sender, ChatThread thread)
@@ -67,6 +71,7 @@ namespace MauiApp1ChatWithAI.ViewModels
             // これを追加した。
             await _chatService.LoadThread(thread.Id);
             this.selectedThread = thread;
+            IsThreadSelected = true;
         }
 
         public override async Task InitializeAsync()
@@ -127,6 +132,7 @@ namespace MauiApp1ChatWithAI.ViewModels
                 SidebarTranslation = IsSidebarOpen ? 0 : -300;
 
                 Debug.WriteLine($"Loaded messages count: {messageHistory.Count}");
+                IsThreadSelected = true;
             }
             catch (Exception ex)
             {
