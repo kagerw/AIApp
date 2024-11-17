@@ -32,7 +32,23 @@ namespace MauiApp1ChatWithAI.ViewModels
             threadEventAggregator.ThreadCreated += ThreadEventAggregator_ThreadCreated;
             threadEventAggregator.ThreadsNeedReorder += ThreadEventAggregator_ThreadsNeedReorder;  // 追加
             threadEventAggregator.ThreadDeleted += ThreadEventAggregator_ThreadDeleted;
+            threadEventAggregator.ThreadUpdated += ThreadEventAggregator_ThreadUpdated;
             threadEventAggregator1 = threadEventAggregator;
+        }
+
+        private void ThreadEventAggregator_ThreadUpdated(object? sender, ChatThread thread)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                var index = Threads.ToList().FindIndex(t => t.Id == thread.Id);
+                if (index != -1)
+                {
+                    Threads[index] = thread;  // 既存のアイテムを更新
+
+                    // コレクションの変更を通知
+                    OnPropertyChanged(nameof(Threads));
+                }
+            });
         }
 
         private void ThreadEventAggregator_ThreadDeleted(object? sender, ChatThread thread)
