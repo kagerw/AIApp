@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiApp1ChatWithAI.Views.ThreadDetailsPage"
+             Title="ThreadDetailsPage">
+    <VerticalStackLayout Padding="20" Spacing="20">
+        <!-- スレッド詳細コンテンツ -->
+        <VerticalStackLayout Spacing="5">
+            <!-- ここに既存のスレッド詳細の内容を配置 -->
+        </VerticalStackLayout>
+
+        <!-- 戻るボタン -->
+        <Button Text="戻る"
+                Command="{Binding GoBackCommand}"
+                HorizontalOptions="Start"
+                Margin="0,20,0,0"/>
+    </VerticalStackLayout>
+</ContentPage>

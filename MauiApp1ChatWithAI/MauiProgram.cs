@@ -41,23 +41,22 @@ namespace MauiApp1ChatWithAI
             builder.Services.AddSingleton<ILLMApiService, ClaudeApiService>();
             builder.Services.AddSingleton<ChatService>();
 
-            // ViewModels and Pages
-            builder.Services.AddTransient<TestViewModel>();
-            builder.Services.AddTransient<TestPage>();
-
             // ViewModels
             builder.Services.AddTransient<MainViewModel>();
             builder.Services.AddTransient<DevMenuViewModel>();
             builder.Services.AddTransient<ThreadSettingsViewModel>();
+            builder.Services.AddTransient<ThreadDetailsViewModel>();
 
             // Views
             builder.Services.AddTransient<MainPage>();
             builder.Services.AddTransient<DevMenuPage>();
             builder.Services.AddTransient<ThreadSettingsPage>();
+            builder.Services.AddTransient<ThreadDetailsPage>();
 
             builder.Services.AddTransient<ThreadListViewModel>();
             builder.Services.AddTransient<ThreadListControl>();
             builder.Services.AddSingleton<ISettingsService, SettingsService>();
+
 
 #if DEBUG
             builder.Logging.AddDebug();

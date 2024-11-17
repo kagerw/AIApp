@@ -19,7 +19,7 @@
         </ResourceDictionary>
     </Shell.Resources>
 
-
+    <!-- Main Page -->
     <ShellContent
         Title="Chat"
         ContentTemplate="{DataTemplate view:MainPage}"

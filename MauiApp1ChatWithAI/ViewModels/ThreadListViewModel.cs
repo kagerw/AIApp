@@ -10,10 +10,11 @@ using System.Collections.ObjectModel;
 using MauiApp1ChatWithAI.Service;
 using MauiApp1ChatWithAI.Extensions;
 using System.Diagnostics;
+using MauiApp1ChatWithAI.Views;
 
 namespace MauiApp1ChatWithAI.ViewModels
 {
-    public partial class ThreadListViewModel : ObservableObject, IDisposable
+    public partial class ThreadListViewModel : ViewModelBase, IDisposable
     {
         private readonly IChatDataManager _chatDataManager;
 
@@ -64,6 +65,19 @@ namespace MauiApp1ChatWithAI.ViewModels
             finally
             {
                 IsLoading = false;
+            }
+        }
+
+        [RelayCommand]
+        private async Task GoToThreadDetails(ChatThread thread)
+        {
+            if (thread != null)
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    { "Thread", thread }
+                };
+                await Shell.Current.GoToAsync(nameof(ThreadDetailsPage), parameters);
             }
         }
 
