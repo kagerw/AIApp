@@ -1,35 +1,20 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MauiApp1ChatWithAI.Models;
+using MauiApp1ChatWithAI.Models.Database;
 using MauiApp1ChatWithAI.Service;
-using System.Collections.ObjectModel;
-using System.Xml.Linq;
+using System.Diagnostics;
 
 namespace MauiApp1ChatWithAI.ViewModels
 {
-    public partial class ThreadEditViewModel : ViewModelBase
+    public partial class ThreadEditViewModel : ViewModelBase, IQueryAttributable
     {
         private readonly IChatDataManager _dataManager;
         private readonly ISettingsService _settingsService;
         private readonly IThreadEventAggregator _threadEventAggregator;
-        private readonly string _threadId;
 
-        public ThreadEditViewModel(
-            IChatDataManager dataManager,
-            ISettingsService settingsService,
-            IThreadEventAggregator threadEventAggregator,
-            string threadId)
-        {
-            _dataManager = dataManager;
-            _settingsService = settingsService;
-            _threadEventAggregator = threadEventAggregator;
-            _threadId = threadId;
-
-            Title = "スレッド編集";
-            // プロバイダー一覧の設定
-            Providers = new List<string> { AppConstants.Providers.Claude };
-            SelectedProvider = Providers[0];
-        }
+        [ObservableProperty]
+        private ChatThread currentThread;
 
         [ObservableProperty]
         private string threadTitle = string.Empty;
@@ -47,31 +32,53 @@ namespace MauiApp1ChatWithAI.ViewModels
         private bool isSystemPromptEnabled;
 
         [ObservableProperty]
-        private DateTime createdAt;
+        private bool isLoading;
 
-        [ObservableProperty]
-        private DateTime updatedAt;
-
-        public override async Task InitializeAsync()
+        public ThreadEditViewModel(
+            IChatDataManager dataManager,
+            ISettingsService settingsService,
+            IThreadEventAggregator threadEventAggregator)
         {
+            _dataManager = dataManager;
+            _settingsService = settingsService;
+            _threadEventAggregator = threadEventAggregator;
+
+            Title = "スレッド編集";
+            Providers = new List<string> { AppConstants.Providers.Claude };
+            SelectedProvider = Providers[0];
+        }
+
+        private async Task LoadCurrentThread()
+        {
+            if (IsBusy) return;
+            IsBusy = true;
+            IsLoading = true;
+
             try
             {
-                // スレッドデータの読み込み
-                var thread = await _dataManager.GetThreadAsync(_threadId);
-                if (thread != null)
+                if (CurrentThread?.Id != null)
                 {
-                    ThreadTitle = thread.Title;
-                    SelectedProvider = thread.Provider;
-                    SystemPrompt = thread.SystemPrompt ?? string.Empty;
-                    IsSystemPromptEnabled = thread.IsSystemPromptEnabled;
-                    CreatedAt = thread.CreatedAt;
-                    UpdatedAt = thread.LastMessageAt;
+                    var thread = await _dataManager.GetThreadAsync(CurrentThread.Id);
+                    if (thread != null)
+                    {
+                        CurrentThread = thread;
+                        ThreadTitle = thread.Title;
+                        SelectedProvider = thread.Provider;
+                        SystemPrompt = thread.SystemPrompt ?? string.Empty;
+                        IsSystemPromptEnabled = !string.IsNullOrEmpty(thread.SystemPrompt);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 await Shell.Current.DisplayAlert("エラー",
                     $"スレッドの読み込みに失敗しました: {ex.Message}", "OK");
+                Debug.WriteLine($"Error loading thread: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
+                IsLoading = false;
             }
         }
 
@@ -86,22 +93,25 @@ namespace MauiApp1ChatWithAI.ViewModels
 
             try
             {
-                var updatedThread = await _dataManager.UpdateThreadTitleAsync(
-                    _threadId,
-                    ThreadTitle
-                );
-
-                if (updatedThread != null)
+                if (CurrentThread?.Id != null)
                 {
-                    _threadEventAggregator.PublishThreadUpdated(updatedThread);
-                }
+                    var updatedThread = await _dataManager.UpdateThreadTitleAsync(
+                        CurrentThread.Id,
+                        ThreadTitle);
 
-                await Shell.Current.GoToAsync("..");
+                    if (updatedThread != null)
+                    {
+                        _threadEventAggregator.PublishThreadUpdated(updatedThread);
+                    }
+
+                    await Shell.Current.GoToAsync("..");
+                }
             }
             catch (Exception ex)
             {
                 await Shell.Current.DisplayAlert("エラー",
                     $"スレッドの更新に失敗しました: {ex.Message}", "OK");
+                Debug.WriteLine($"Error updating thread: {ex.Message}");
             }
         }
 
@@ -109,6 +119,16 @@ namespace MauiApp1ChatWithAI.ViewModels
         private async Task Cancel()
         {
             await Shell.Current.GoToAsync("..");
+        }
+
+        // IQueryAttributable の実装
+        public async void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            if (query.TryGetValue("Thread", out var threadObj) && threadObj is ChatThread thread)
+            {
+                CurrentThread = thread;
+                await LoadCurrentThread();
+            }
         }
     }
 }
