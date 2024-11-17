@@ -100,7 +100,7 @@ namespace MauiApp1ChatWithAI.Service
         /// <param name="threadId">更新対象のスレッドID</param>
         /// <param name="newTitle">新しいタイトル</param>
         /// <returns>
-        /// 更新が成功した場合はtrue、スレッドが存在しない場合はfalseを返します。
+        /// 更新されたスレッド情報を返します。スレッドが存在しない場合はnullを返します。
         /// </returns>
         /// <exception cref="ArgumentException">
         /// threadIdが空の場合、またはnewTitleが空の場合にスローされます。
@@ -108,7 +108,7 @@ namespace MauiApp1ChatWithAI.Service
         /// <exception cref="InvalidOperationException">
         /// データベース操作中にエラーが発生した場合にスローされます。
         /// </exception>
-        Task<bool> UpdateThreadTitleAsync(string threadId, string newTitle);
+        Task<ChatThread> UpdateThreadTitleAsync(string threadId, string newTitle);
     }
 
 }

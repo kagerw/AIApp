@@ -201,7 +201,7 @@ namespace MauiApp1ChatWithAI.Service
             }
         }
 
-        public async Task<bool> UpdateThreadTitleAsync(string threadId, string newTitle)
+        public async Task<ChatThread?> UpdateThreadTitleAsync(string threadId, string newTitle)
         {
             if (string.IsNullOrEmpty(threadId))
                 throw new ArgumentException("ThreadId cannot be empty", nameof(threadId));
@@ -216,7 +216,7 @@ namespace MauiApp1ChatWithAI.Service
                 // スレッドの存在確認と取得
                 var thread = await _context.Threads.FindAsync(threadId);
                 if (thread == null)
-                    return false;
+                    return null;
 
                 // タイトルを更新
                 thread.Title = newTitle;
@@ -227,7 +227,7 @@ namespace MauiApp1ChatWithAI.Service
                 // トランザクションのコミット
                 await transaction.CommitAsync();
 
-                return true;
+                return thread;
             }
             catch (Exception ex)
             {
