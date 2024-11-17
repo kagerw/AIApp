@@ -45,14 +45,12 @@ namespace MauiApp1ChatWithAI
             builder.Services.AddTransient<MainViewModel>();
             builder.Services.AddTransient<DevMenuViewModel>();
             builder.Services.AddTransient<ThreadCreateViewModel>();
-            builder.Services.AddTransient<ThreadDetailsViewModel>();
             builder.Services.AddTransient<ThreadEditViewModel>();
 
             // Views
             builder.Services.AddTransient<MainPage>();
             builder.Services.AddTransient<DevMenuPage>();
             builder.Services.AddTransient<ThreadCreatePage>();
-            builder.Services.AddTransient<ThreadDetailsPage>();
 
             builder.Services.AddTransient<ThreadListViewModel>();
             builder.Services.AddTransient<ThreadListControl>();
