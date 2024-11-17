@@ -19,9 +19,4 @@ public partial class MainPage : ContentPage
         base.OnAppearing();
         await _viewModel.InitializeAsync();
     }
-    protected override void OnDisappearing()
-    {
-        base.OnDisappearing();
-        _viewModel?.Dispose();
-    }
 }

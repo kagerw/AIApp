@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 namespace MauiApp1ChatWithAI.ViewModels
 {
-    public partial class MainViewModel : ViewModelBase
+    public partial class MainViewModel : ViewModelBase, IDisposable
     {
         private readonly IChatDataManager _chatDataManager;
         private readonly ILLMApiService _llmService;
