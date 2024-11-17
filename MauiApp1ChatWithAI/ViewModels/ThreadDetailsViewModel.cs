@@ -2,11 +2,13 @@
 using CommunityToolkit.Mvvm.Input;
 using MauiApp1ChatWithAI.Models.Database;
 using MauiApp1ChatWithAI.Service;
+using MauiApp1ChatWithAI.Views;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MauiApp1ChatWithAI.ViewModels
@@ -96,7 +98,20 @@ namespace MauiApp1ChatWithAI.ViewModels
         }
 
         [RelayCommand]
-        private async Task DeleeteThread()
+        private async Task EditThread()
+        {
+            if (CurrentThread != null)
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    { "Thread", CurrentThread }
+                };
+                await Shell.Current.GoToAsync(nameof(ThreadEditPage), parameters);
+            }
+        }
+
+        [RelayCommand]
+        private async Task DeleteThread()
         {
             try
             {

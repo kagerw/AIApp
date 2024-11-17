@@ -6,9 +6,9 @@
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
   IgnorableNamespaces="uap rescap">
 
-  <Identity Name="com.yourname.chatWithAIXXXXX" Publisher="CN=kagerw" Version="0.0.1.0" />
+  <Identity Name="com.yourname.chatWithAIaaaaaaaa" Publisher="CN=kagerw" Version="0.0.2.0" />
 
-  <mp:PhoneIdentity PhoneProductId="A4D39CF9-5208-4E07-A226-08FAFCCDD631" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="A4D39CF9-5208-4E07-A226-08FAFCCDD632" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>$placeholder$</DisplayName>
@@ -28,8 +28,8 @@
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="$placeholder$"
-        Description="$placeholder$"
+        DisplayName="ChatWithClaude1111"
+        Description="ChatWithClaude"
         Square150x150Logo="$placeholder$.png"
         Square44x44Logo="$placeholder$.png"
         BackgroundColor="transparent">
