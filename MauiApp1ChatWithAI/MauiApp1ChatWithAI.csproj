@@ -73,6 +73,9 @@
 	  <Compile Update="Views\ThreadCreatePage.xaml.cs">
 	    <DependentUpon>ThreadCreatePage.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Views\ThreadEditPage.xaml.cs">
+	    <DependentUpon>ThreadEditPage.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -91,7 +94,7 @@
 	  <MauiXaml Update="Views\ThreadCreatePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\ThreadUpdatePage.xaml">
+	  <MauiXaml Update="Views\ThreadEditPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
