@@ -1,13 +1,12 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MauiApp1ChatWithAI.Views.ThreadEditPage"
-             Title="ThreadUpdatePage">
+             Title="{Binding Title}">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="削除"
-                     Command="{Binding DeleteCommand}"
+                     Command="{Binding DeleteThreadCommand}"
                      IconImageSource="delete.png"/>
     </ContentPage.ToolbarItems>
-
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="20">
             <!-- タイトル設定 -->
@@ -18,45 +17,47 @@
                        Placeholder="タイトルを入力..."/>
             </VerticalStackLayout>
 
-            <!-- プロバイダー選択 -->
+            <!-- プロバイダー表示 (読み取り専用) -->
             <VerticalStackLayout Spacing="5">
                 <Label Text="プロバイダー"
                        Style="{StaticResource FormLabelStyle}"/>
-                <Picker ItemsSource="{Binding Providers}"
-                        SelectedItem="{Binding SelectedProvider}"/>
+                <Label Text="{Binding SelectedProvider}"
+                       TextColor="Gray"
+                       Margin="5,0,0,0"/>
             </VerticalStackLayout>
 
-            <!-- システムプロンプト設定 -->
+            <!-- システムプロンプト表示 (読み取り専用) -->
             <VerticalStackLayout Spacing="5">
-                <Grid ColumnDefinitions="*,Auto">
-                    <Label Text="システムプロンプト"
-                           Style="{StaticResource FormLabelStyle}"
-                           VerticalOptions="Center"/>
-                    <CheckBox Grid.Column="1"
-                             IsChecked="{Binding IsSystemPromptEnabled}"/>
-                </Grid>
-                <Editor Text="{Binding SystemPrompt}"
-                        HeightRequest="150"
-                        IsEnabled="{Binding IsSystemPromptEnabled}"
-                        Placeholder="システムプロンプトを入力..."/>
+                <Label Text="システムプロンプト"
+                       Style="{StaticResource FormLabelStyle}"/>
+                <Frame Padding="10" 
+                       BorderColor="LightGray"
+                       HasShadow="False">
+                    <Label Text="{Binding SystemPrompt}"
+                           TextColor="Gray"/>
+                </Frame>
             </VerticalStackLayout>
 
-            <!-- 更新日時表示 -->
+            <!-- 日時情報 -->
             <VerticalStackLayout Spacing="5">
                 <Label Text="作成日時"
                        Style="{StaticResource FormLabelStyle}"/>
-                <Label Text="{Binding CreatedAt, StringFormat='{0:yyyy/MM/dd HH:mm:ss}'}"
-                       TextColor="Gray"/>
+                <Label Text="{Binding CurrentThread.CreatedAt, StringFormat='{0:yyyy/MM/dd HH:mm:ss}'}"
+                       TextColor="Gray"
+                       Margin="5,0,0,0"/>
+
                 <Label Text="更新日時"
-                       Style="{StaticResource FormLabelStyle}"/>
-                <Label Text="{Binding UpdatedAt, StringFormat='{0:yyyy/MM/dd HH:mm:ss}'}"
-                       TextColor="Gray"/>
+                       Style="{StaticResource FormLabelStyle}"
+                       Margin="0,10,0,0"/>
+                <Label Text="{Binding CurrentThread.LastMessageAt, StringFormat='{0:yyyy/MM/dd HH:mm:ss}'}"
+                       TextColor="Gray"
+                       Margin="5,0,0,0"/>
             </VerticalStackLayout>
 
             <!-- ボタングループ -->
             <HorizontalStackLayout Spacing="10" 
-                                  HorizontalOptions="End"
-                                  Margin="0,20,0,0">
+                                 HorizontalOptions="End"
+                                 Margin="0,20,0,0">
                 <Button Text="キャンセル"
                         Command="{Binding CancelCommand}"/>
                 <Button Text="更新"
@@ -64,5 +65,4 @@
             </HorizontalStackLayout>
         </VerticalStackLayout>
     </ScrollView>
-
 </ContentPage>

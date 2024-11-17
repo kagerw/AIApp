@@ -99,7 +99,7 @@ namespace MauiApp1ChatWithAI.ViewModels
                 {
                     { "Thread", thread }
                 };
-                await Shell.Current.GoToAsync(nameof(ThreadDetailsPage), parameters);
+                await Shell.Current.GoToAsync(nameof(ThreadEditPage), parameters);
             }
         }
 
