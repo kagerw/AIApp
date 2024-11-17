@@ -27,8 +27,18 @@
                 </VerticalStackLayout>
 
                 <VerticalStackLayout Spacing="5">
-                    <Label Text="システムプロンプト"
-                           Style="{StaticResource FormLabelStyle}"/>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="システムプロンプト"
+                               Style="{StaticResource FormLabelStyle}"
+                               Grid.Column="0"/>
+                        <!-- コピーボタンを追加 -->
+                        <Button Text="コピー"
+                                Command="{Binding CopySystemPromptCommand}"
+                                IsVisible="{Binding HasSystemPrompt}"
+                                Grid.Column="1"
+                                HeightRequest="35"
+                                Padding="10,0"/>
+                    </Grid>
                     <Label Text="{Binding CurrentThread.SystemPrompt}"
                            IsVisible="{Binding HasSystemPrompt}"
                            Style="{StaticResource BodyLabelStyle}"/>
