@@ -4,15 +4,8 @@ using MauiApp1ChatWithAI.Extensions;
 using MauiApp1ChatWithAI.Models;
 using MauiApp1ChatWithAI.Models.Database;
 using MauiApp1ChatWithAI.Service;
-using Microsoft.Maui.Controls;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MauiApp1ChatWithAI.ViewModels
 {
@@ -221,6 +214,16 @@ namespace MauiApp1ChatWithAI.ViewModels
                 threadEventAggregator1.PublishThreadsNeedReorder();
             }
         }
+
+        [RelayCommand]
+        private void CloseSidebar()
+        {
+            IsSidebarOpen = false;
+            // SidebarTranslationを更新するコードを追加
+            SidebarTranslation = IsSidebarOpen ? 0 : -300;
+            Debug.WriteLine($"Toggling sidebar: IsSidebarOpen={IsSidebarOpen}, SidebarTranslation={SidebarTranslation}");
+        }
+
         private async Task LoadMessages(string threadId)
         {
             try

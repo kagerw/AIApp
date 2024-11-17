@@ -73,7 +73,6 @@
             </Grid>
 
             <!-- メッセージ入力エリア -->
-            <!-- メッセージ入力エリア -->
             <Grid Grid.Row="2"
                 Padding="16"
                 ColumnDefinitions="*,Auto" 
@@ -91,14 +90,13 @@
             </Grid>
         </Grid>
 
-        <!-- サイドバー（左側に配置） -->
-        <!--<views:ThreadListView
-            x:Name="SidebarPanel"
-            WidthRequest="300"
-            HorizontalOptions="Start"
-            BackgroundColor="White"
-            TranslationX="{Binding SidebarTranslation}"
-            ThreadSelected="{Binding OnThreadSelected}"/>-->
+        <!-- 透明なオーバーレイ -->
+        <ContentView IsVisible="{Binding IsSidebarOpen}"
+                     BackgroundColor="Transparent">
+            <ContentView.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding CloseSidebarCommand}" />
+            </ContentView.GestureRecognizers>
+        </ContentView>
 
         <!-- サイドバー -->
         <Grid x:Name="SidebarPanel"
@@ -109,16 +107,5 @@
               ZIndex="1">
             <views:ThreadListControl />
         </Grid>
-
-        <!-- オーバーレイ -->
-        <!--<Grid BackgroundColor="#80000000"
-            IsVisible="{Binding IsSidebarOpen}"
-              InputTransparent="False"
-              ZIndex="1">
-            <Grid.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding ToggleThreadListCommand}"/>
-            </Grid.GestureRecognizers>
-        </Grid>-->
     </Grid>
-
 </ContentPage>

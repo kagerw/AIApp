@@ -5,6 +5,7 @@ using MauiApp1ChatWithAI.ViewModels;
 using MauiApp1ChatWithAI.Views;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 
 namespace MauiApp1ChatWithAI
 {
@@ -25,6 +26,9 @@ namespace MauiApp1ChatWithAI
             builder.Services.AddDbContext<ChatDbContext>(options =>
             {
                 var dbPath = Path.Combine(FileSystem.AppDataDirectory, "chat.db");
+
+                Debug.WriteLine("dbPath is " + dbPath + Environment.NewLine);
+
                 options.UseSqlite($"Data Source={dbPath}");
             });
 

@@ -1,10 +1,6 @@
 ﻿using MauiApp1ChatWithAI.Models.Database;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace MauiApp1ChatWithAI.Service
 {
@@ -42,9 +38,11 @@ namespace MauiApp1ChatWithAI.Service
 
             using var transaction = await _context.Database.BeginTransactionAsync();
             _context.Threads.Add(thread);
+            Debug.WriteLine($"Database path when thread was created: {_context.Database.GetDbConnection().ConnectionString}");
             try
             {
                 await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
                 return thread.Id;
             }
             catch
@@ -82,6 +80,8 @@ namespace MauiApp1ChatWithAI.Service
 
             // トランザクション開始
             using var transaction = await _context.Database.BeginTransactionAsync();
+
+            
             try
             {
                 var thread = await _context.Threads.FindAsync(threadId);
