@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MauiApp1ChatWithAI.Models.Database;
-using System.Collections.ObjectModel;
-using MauiApp1ChatWithAI.Service;
 using MauiApp1ChatWithAI.Extensions;
-using System.Diagnostics;
+using MauiApp1ChatWithAI.Models.Database;
+using MauiApp1ChatWithAI.Service;
 using MauiApp1ChatWithAI.Views;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace MauiApp1ChatWithAI.ViewModels
 {
@@ -36,7 +31,18 @@ namespace MauiApp1ChatWithAI.ViewModels
             LoadThreadsAsync().FireAndForgetSafeAsync();
             threadEventAggregator.ThreadCreated += ThreadEventAggregator_ThreadCreated;
             threadEventAggregator.ThreadsNeedReorder += ThreadEventAggregator_ThreadsNeedReorder;  // 追加
+            threadEventAggregator.ThreadDeleted += ThreadEventAggregator_ThreadDeleted;
             threadEventAggregator1 = threadEventAggregator;
+        }
+
+        private void ThreadEventAggregator_ThreadDeleted(object? sender, ChatThread thread)
+        {
+            Debug.WriteLine($"ThreadEventAggregator_ThreadDeleted: {thread?.Title ?? "null"}, Id: {thread?.Id ?? "null"}");
+            Threads.Remove(thread);
+            Threads = new ObservableCollection<ChatThread>(
+                Threads.OrderByDescending(t => t.LastMessageAt)
+            );
+            SelectedThread = null;
         }
 
         private void ThreadEventAggregator_ThreadCreated(object? sender, ChatThread thread)

@@ -113,6 +113,7 @@ namespace MauiApp1ChatWithAI.ViewModels
                     {
                         await _dataManager.DeleteThreadAsync(currentThread.Id);
                         await Shell.Current.DisplayAlert("成功", "スレッドを削除しました。", "OK");
+                        _threadEventAggregator.publishThreadDeleeted(currentThread);
                         await Shell.Current.GoToAsync("..");
                     }
                 }

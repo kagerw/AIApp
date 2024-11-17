@@ -12,9 +12,12 @@ namespace MauiApp1ChatWithAI.Service
         event EventHandler<ChatThread> ThreadSelected;
         event EventHandler<ChatThread> ThreadCreated;
         event EventHandler ThreadsNeedReorder;  // 追加
+        event EventHandler<ChatThread> ThreadDeleted;
 
         void PublishThreadSelected(ChatThread thread);
         void PublishThreadCreated(ChatThread thread);
         void PublishThreadsNeedReorder();  // 追加
+
+        void publishThreadDeleeted(ChatThread thread);
     }
 }
