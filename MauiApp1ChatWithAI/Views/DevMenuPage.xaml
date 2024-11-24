@@ -9,7 +9,7 @@
         <Grid Grid.Row="0" RowDefinitions="Auto,*" Padding="20">
             <!-- タブヘッダー -->
             <Grid Grid.Row="0" 
-                  ColumnDefinitions="*,*" 
+                  ColumnDefinitions="*,*,*" 
                   Margin="0,0,0,20">
                 <Button Grid.Column="0"
                         Text="API設定"
@@ -23,6 +23,12 @@
                         CommandParameter="prompts"
                         Style="{StaticResource TabButtonStyle}"
                         BackgroundColor="{Binding IsPromptsTabSelected, Converter={StaticResource BoolToBackgroundConverter}}"/>
+                <Button Grid.Column="2"
+                        Text="DB接続設定"
+                        Command="{Binding SwitchTabCommand}"
+                        CommandParameter="db"
+                        Style="{StaticResource TabButtonStyle}"
+                        BackgroundColor="{Binding IsDbTabSelected, Converter={StaticResource BoolToBackgroundConverter}}"/>
             </Grid>
 
             <!-- タブコンテンツ -->
@@ -45,6 +51,7 @@
                         </Grid>
                     </VerticalStackLayout>
                 </VerticalStackLayout>
+
                 <!-- プロンプト設定タブ -->
                 <VerticalStackLayout IsVisible="{Binding IsPromptsTabSelected}"
                                    Spacing="20">
@@ -55,6 +62,65 @@
                                 HeightRequest="200"
                                 Placeholder="デフォルトのシステムプロンプトを入力..."/>
                     </VerticalStackLayout>
+                </VerticalStackLayout>
+
+                <!-- DB接続設定タブ -->
+                <VerticalStackLayout IsVisible="{Binding IsDbTabSelected}"
+                                   Spacing="20">
+                    <Label Text="データベース接続設定" 
+                           FontSize="24" 
+                           HorizontalOptions="Center"/>
+
+                    <Grid RowSpacing="10" ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Label Text="サーバー:" Grid.Row="0" Grid.Column="0" 
+                               VerticalOptions="Center"/>
+                        <Entry Text="{Binding Server}" Grid.Row="0" Grid.Column="1" 
+                               Placeholder="localhost"/>
+
+                        <Label Text="ポート:" Grid.Row="1" Grid.Column="0" 
+                               VerticalOptions="Center"/>
+                        <Entry Text="{Binding Port}" Grid.Row="1" Grid.Column="1" 
+                               Keyboard="Numeric" Placeholder="3306"/>
+
+                        <Label Text="ユーザー名:" Grid.Row="2" Grid.Column="0" 
+                               VerticalOptions="Center"/>
+                        <Entry Text="{Binding Username}" Grid.Row="2" Grid.Column="1" 
+                               Placeholder="root"/>
+
+                        <Label Text="パスワード:" Grid.Row="3" Grid.Column="0" 
+                               VerticalOptions="Center"/>
+                        <Entry Text="{Binding Password}" Grid.Row="3" Grid.Column="1" 
+                               IsPassword="True"/>
+
+                        <Label Text="データベース名:" Grid.Row="4" Grid.Column="0" 
+                               VerticalOptions="Center"/>
+                        <Entry Text="{Binding DatabaseName}" Grid.Row="4" Grid.Column="1"/>
+                    </Grid>
+
+                    <Label Text="{Binding DbStatusMessage}"
+                           HorizontalOptions="Center"
+                           IsVisible="{Binding DbStatusMessage, Converter={StaticResource StringNotEmptyConverter}}"/>
+
+                    <HorizontalStackLayout Spacing="20" HorizontalOptions="Center">
+                        <Button Text="テスト接続"
+                                Command="{Binding TestConnectionCommand}"
+                                IsEnabled="{Binding IsDbTesting, Converter={StaticResource InverseBoolConverter}}"/>
+
+                        <Button Text="設定を保存"
+                                Command="{Binding SaveDbSettingsCommand}"/>
+                    </HorizontalStackLayout>
                 </VerticalStackLayout>
             </Grid>
         </Grid>

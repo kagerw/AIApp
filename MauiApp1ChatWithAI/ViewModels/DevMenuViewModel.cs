@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using MauiApp1ChatWithAI.Models;
 using MauiApp1ChatWithAI.Service;
+using MauiApp1ChatWithAI.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,8 @@ namespace MauiApp1ChatWithAI.ViewModels
 
         public DevMenuViewModel(
             ISettingsService settingsService,
-            ILLMApiService llmService)
+            ILLMApiService llmService,
+            IDatabaseService databaseService)
         {
             _settingsService = settingsService;
             _llmService = llmService;
@@ -25,6 +27,8 @@ namespace MauiApp1ChatWithAI.ViewModels
 
             // 初期タブ選択
             IsApiTabSelected = true;
+
+            this._databaseService = databaseService;
         }
 
         [ObservableProperty]
@@ -38,6 +42,9 @@ namespace MauiApp1ChatWithAI.ViewModels
 
         [ObservableProperty]
         private bool isPromptsTabSelected;
+
+        [ObservableProperty]
+        private bool isDbTabSelected;
 
         public override async Task InitializeAsync()
         {
@@ -72,6 +79,7 @@ namespace MauiApp1ChatWithAI.ViewModels
         {
             IsApiTabSelected = tab == "api";
             IsPromptsTabSelected = tab == "prompts";
+            IsDbTabSelected = tab == "db";
         }
 
         [RelayCommand]
@@ -95,6 +103,84 @@ namespace MauiApp1ChatWithAI.ViewModels
             {
                 await Shell.Current.DisplayAlert("エラー",
                     $"設定の保存に失敗しました: {ex.Message}", "OK");
+            }
+        }
+        
+        [ObservableProperty]
+        private bool isTesting;
+
+        [ObservableProperty]
+        private string statusMessage;
+
+        private readonly IDatabaseService _databaseService;
+
+        [ObservableProperty]
+        private string server;
+
+        [ObservableProperty]
+        private int port = 3306; // MySQLのデフォルトポート
+
+        [ObservableProperty]
+        private string username;
+
+        [ObservableProperty]
+        private string password;
+
+        [ObservableProperty]
+        private string databaseName;
+
+        [RelayCommand]
+        private async Task TestConnection()
+        {
+            if (IsTesting) return;
+
+            try
+            {
+                IsTesting = true;
+                StatusMessage = "接続テスト中...";
+
+                var settings = new DatabaseSettings
+                {
+                    Server = Server,
+                    Port = Port,
+                    Username = Username,
+                    Password = Password,
+                    DatabaseName = DatabaseName
+                };
+
+                var success = await _databaseService.TestConnectionAsync(settings);
+                StatusMessage = success ? "接続成功!" : "接続失敗";
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"エラー: {ex.Message}";
+            }
+            finally
+            {
+                IsTesting = false;
+            }
+        }
+
+        [RelayCommand]
+        private async Task SaveSettings()
+        {
+            try
+            {
+                var settings = new DatabaseSettings
+                {
+                    Server = Server,
+                    Port = Port,
+                    Username = Username,
+                    Password = Password,
+                    DatabaseName = DatabaseName
+                };
+
+                await _databaseService.SaveSettingsAsync(settings);
+                StatusMessage = "設定を保存しました";
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"保存エラー: {ex.Message}";
             }
         }
     }
