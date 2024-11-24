@@ -3,6 +3,7 @@
              xmlns:views="clr-namespace:MauiApp1ChatWithAI.Views"
              xmlns:viewmodels="clr-namespace:MauiApp1ChatWithAI.ViewModels"
              xmlns:models="clr-namespace:MauiApp1ChatWithAI.Models"
+             xmlns:beavior="clr-namespace:MauiApp1ChatWithAI.Beavior"
              x:Class="MauiApp1ChatWithAI.Views.MainPage">
 
     <Grid>
@@ -45,6 +46,9 @@
             <Grid Grid.Row="1">
                 <CollectionView ItemsSource="{Binding Messages}"
                     Margin="20">
+                    <CollectionView.Behaviors>
+                        <beavior:CollectionViewScrollBehavior />
+                    </CollectionView.Behaviors>
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:MessageDisplay">
                             <Grid Padding="10">

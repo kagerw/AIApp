@@ -70,6 +70,7 @@ namespace MauiApp1ChatWithAI.ViewModels
             IsThreadSelected = true;
         }
 
+        [RelayCommand]
         private async Task OpenDevMenu()
         {
             await Shell.Current.GoToAsync(nameof(Views.DevMenuPage));
