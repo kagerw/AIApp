@@ -67,15 +67,11 @@ namespace MauiApp1ChatWithAI.Services
                 var json = await _secureStorage.GetSecureValue(SETTINGS_KEY);
                 if (string.IsNullOrEmpty(json))
                 {
-                    return new DatabaseSettings
-                    {
-                        Port = 3306,
-                        Server = "localhost"
-                    };
+                    return null;
                 }
 
                 return JsonSerializer.Deserialize<DatabaseSettings>(json)
-                       ?? new DatabaseSettings { Port = 3306, Server = "localhost" };
+                       ?? null;
             }
             catch (Exception ex)
             {

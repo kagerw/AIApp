@@ -37,26 +37,33 @@ namespace MauiApp1ChatWithAI
 
                 // 非同期で設定を取得
                 var settings = await databaseService.LoadSettingsAsync();
-                string connectionString = null;
-                // 設定が存在しない場合、デフォルト値を設定
+
+                // 接続文字列の初期化
+                string connectionString;
+
                 if (settings == null || string.IsNullOrWhiteSpace(settings.ConnectionString))
                 {
-                    Debug.WriteLine("データベース設定が見つかりません。デフォルトの接続文字列を使用します。");
+                    Debug.WriteLine("データベース設定が見つかりません。デフォルトのSQLite接続文字列を使用します。");
 
-                    // デフォルトの接続文字列を設定
-                    connectionString = $"Data Source={Path.Combine(FileSystem.AppDataDirectory, "default_chat.db")}";
+                    // デフォルトのSQLite接続文字列を設定
+                    var dbPath = Path.Combine(FileSystem.AppDataDirectory, "default_chat.db");
+                    connectionString = $"Data Source={dbPath}";
 
-                    // ユーザーに設定を促すため、デフォルト設定を保存する
+                    Debug.WriteLine("SQLiteのdbPathは " + dbPath + Environment.NewLine);
+
+                    // SQLiteを使用してDbContextのオプションを設定
+                    options.UseSqlite(connectionString);
                 }
                 else
                 {
+                    // 設定から接続文字列を取得
                     connectionString = settings.ConnectionString;
+
+                    Debug.WriteLine("Using database connection string: " + connectionString);
+
+                    // MySQLを使用してDbContextのオプションを設定
+                    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
                 }
-
-                Debug.WriteLine("Using database connection string: " + connectionString);
-
-                // 接続文字列を使用して DbContext のオプションを設定
-                options.UseSqlite(connectionString);
             });
 
             // HttpClientの登録

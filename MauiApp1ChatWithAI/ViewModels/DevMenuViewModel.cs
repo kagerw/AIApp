@@ -162,7 +162,7 @@ namespace MauiApp1ChatWithAI.ViewModels
         }
 
         [RelayCommand]
-        private async Task SaveSettings()
+        private async Task SaveDbSettings()
         {
             try
             {
