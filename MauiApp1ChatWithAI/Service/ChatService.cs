@@ -20,7 +20,7 @@ namespace MauiApp1ChatWithAI.Service
             Debug.WriteLine($"Database location: {dbPath}");
         }
 
-        public async Task LoadThread(string threadId)
+        public async Task<ChatThread> LoadThread(string threadId)
         {
             if (!_threadMessages.ContainsKey(threadId))
             {
@@ -33,6 +33,7 @@ namespace MauiApp1ChatWithAI.Service
             {
                 throw new ArgumentException($"Thread not found: {threadId}");
             }
+            return thread;
         }
         public async Task<string> SendMessage(string threadId, string message)
         {

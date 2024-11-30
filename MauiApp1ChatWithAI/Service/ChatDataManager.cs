@@ -43,6 +43,8 @@ namespace MauiApp1ChatWithAI.Service
             {
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
+                // コンテキストをクリア
+                _context.Entry(thread).State = EntityState.Detached;
                 return thread.Id;
             }
             catch

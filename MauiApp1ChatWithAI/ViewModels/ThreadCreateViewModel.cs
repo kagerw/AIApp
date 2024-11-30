@@ -67,10 +67,9 @@ namespace MauiApp1ChatWithAI.ViewModels
                 );
 
                 // スレッドIDからスレッドオブジェクトを取得
-                var thread = await _dataManager.GetThreadAsync(threadId);
-                if (thread != null)
+                if (threadId != null)
                 {
-                    _threadEventAggregator.PublishThreadCreated(thread);
+                    _threadEventAggregator.PublishThreadCreated(threadId);
                 }
 
                 await Shell.Current.GoToAsync("..");  // 前の画面に戻る

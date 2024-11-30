@@ -61,14 +61,14 @@ namespace MauiApp1ChatWithAI.ViewModels
             SelectedThread = null;
         }
 
-        private void ThreadEventAggregator_ThreadCreated(object? sender, ChatThread thread)
+        private void ThreadEventAggregator_ThreadCreated(object? sender, string threadId)
         {
-            Debug.WriteLine($"ThreadEventAggregator_ThreadCreated: {thread?.Title ?? "null"}, Id: {thread?.Id ?? "null"}");
-            Threads = new ObservableCollection<ChatThread>(
-                Threads.Concat(new[] { thread })
-                .OrderByDescending(t => t.LastMessageAt)
-            );
-            SelectedThread = thread;
+            //Debug.WriteLine($"ThreadEventAggregator_ThreadCreated: {thread?.Title ?? "null"}, Id: {thread?.Id ?? "null"}");
+            //Threads = new ObservableCollection<ChatThread>(
+            //    Threads.Concat(new[] { thread })
+            //    .OrderByDescending(t => t.LastMessageAt)
+            //);
+            //SelectedThread = thread;
         }
 
         [RelayCommand]

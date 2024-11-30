@@ -62,10 +62,10 @@ namespace MauiApp1ChatWithAI.ViewModels
             IsThreadSelected = false;
         }
 
-        private async void OnThreadCreated(object? sender, ChatThread thread)
+        private async void OnThreadCreated(object? sender, string threadId)
         {
             // これを追加した。
-            await _chatService.LoadThread(thread.Id);
+            var thread = await _chatService.LoadThread(threadId);
             this.selectedThread = thread;
             IsThreadSelected = true;
         }

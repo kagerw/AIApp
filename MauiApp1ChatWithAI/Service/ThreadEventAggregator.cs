@@ -10,12 +10,12 @@ namespace MauiApp1ChatWithAI.Service
 {
     public class ThreadEventAggregator : IThreadEventAggregator
     {
-        public event EventHandler<ChatThread> ThreadCreated;
+        public event EventHandler<string> ThreadCreated;
         public event EventHandler<ChatThread> ThreadSelected;
         public event EventHandler ThreadsNeedReorder;
         public event EventHandler<ChatThread> ThreadDeleted;
         public event EventHandler<ChatThread> ThreadUpdated;
-        public void PublishThreadCreated(ChatThread thread) => ThreadCreated?.Invoke(this, thread);
+        public void PublishThreadCreated(string threadId) => ThreadCreated?.Invoke(this, threadId);
 
         public void PublishThreadSelected(ChatThread thread) => ThreadSelected?.Invoke(this, thread);
 

@@ -41,7 +41,7 @@ namespace MauiApp1ChatWithAI
                 // 接続文字列の初期化
                 string connectionString;
 
-                if (settings == null || string.IsNullOrWhiteSpace(settings.ConnectionString))
+                if (settings== null || string.IsNullOrWhiteSpace(settings.ConnectionString))
                 {
                     Debug.WriteLine("データベース設定が見つかりません。デフォルトのSQLite接続文字列を使用します。");
 
