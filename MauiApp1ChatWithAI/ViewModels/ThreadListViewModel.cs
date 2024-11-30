@@ -61,14 +61,36 @@ namespace MauiApp1ChatWithAI.ViewModels
             SelectedThread = null;
         }
 
-        private void ThreadEventAggregator_ThreadCreated(object? sender, string threadId)
+        private async void ThreadEventAggregator_ThreadCreated(object? sender, string threadId)
         {
-            //Debug.WriteLine($"ThreadEventAggregator_ThreadCreated: {thread?.Title ?? "null"}, Id: {thread?.Id ?? "null"}");
-            //Threads = new ObservableCollection<ChatThread>(
-            //    Threads.Concat(new[] { thread })
-            //    .OrderByDescending(t => t.LastMessageAt)
-            //);
-            //SelectedThread = thread;
+            try
+            {
+                // 新しく作成されたスレッドを取得
+                var newThread = await _chatDataManager.GetThreadAsync(threadId);
+                if (newThread == null)
+                {
+                    Debug.WriteLine($"Thread with ID {threadId} not found");
+                    return;
+                }
+
+                // すべてのスレッドを取得して最新順に並べ替え
+                var allThreads = await _chatDataManager.GetAllThreadsAsync();
+
+                // ObservableCollectionを更新
+                Threads = new ObservableCollection<ChatThread>(
+                    allThreads.OrderByDescending(t => t.LastMessageAt)
+                );
+
+                // 選択中のスレッドを新しく作成されたものに設定
+                SelectedThread = newThread;
+
+                Debug.WriteLine($"Thread added successfully: {newThread.Title}, Id: {threadId}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in ThreadEventAggregator_ThreadCreated: {ex.Message}");
+                // 必要に応じてエラーハンドリングを追加
+            }
         }
 
         [RelayCommand]
