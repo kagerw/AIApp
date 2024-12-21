@@ -1,31 +1,35 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿// Models/MessageDisplay.cs
 using MauiApp1ChatWithAI.Models.Database;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MauiApp1ChatWithAI.Models
 {
-    public class MessageDisplay : ObservableObject
+    public class MessageDisplay
     {
-        private readonly Message _message;
+        public string Role { get; set; }
+        public List<MessagePart> Parts { get; set; } // メッセージのパーツをリストで保持
+        public DateTime Timestamp { get; set; }
 
         public MessageDisplay(Message message)
         {
-            _message = message;
+            Role = message.Role;
+            Timestamp = message.Timestamp;
+            Parts = new List<MessagePart>();
+            foreach (var element in message.MessageElements)
+            {
+                Parts.Add(new MessagePart
+                {
+                    Type = element.Type,
+                    Content = element.Content
+                });
+            }
         }
+    }
 
-        public string Role => _message.Role;
-        public string Content => string.Join("\n",
-            _message.MessageElements.Select(e => e.Content));
-
-        public DateTime Timestamp => _message.Timestamp;
-
-        // UI用のヘルパープロパティ
-        public bool IsUser => Role.Equals("user", StringComparison.OrdinalIgnoreCase);
-        public bool IsAssistant => Role.Equals("assistant", StringComparison.OrdinalIgnoreCase);
-        public bool IsSystem => Role.Equals("system", StringComparison.OrdinalIgnoreCase);
+    public class MessagePart
+    {
+        public string Type { get; set; } // "Text" または "Code"
+        public string Content { get; set; }
     }
 }

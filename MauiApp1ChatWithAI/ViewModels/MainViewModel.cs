@@ -6,6 +6,7 @@ using MauiApp1ChatWithAI.Models.Database;
 using MauiApp1ChatWithAI.Service;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace MauiApp1ChatWithAI.ViewModels
 {
@@ -118,11 +119,11 @@ namespace MauiApp1ChatWithAI.ViewModels
             IsLoading = true;
             try
             {
-                var userMessage = MessageInput;
-                MessageInput = string.Empty;  // 先にクリア
+                var userMessageText = MessageInput;
+                MessageInput = string.Empty;
 
                 // ユーザーメッセージの表示
-                var userMessageObject = new Message
+                var userMessage = new Message
                 {
                     Id = Guid.NewGuid().ToString(),
                     ThreadId = this.selectedThread.Id,
@@ -130,36 +131,28 @@ namespace MauiApp1ChatWithAI.ViewModels
                     Timestamp = DateTime.UtcNow,
                     MessageElements = new List<MessageElement>
                     {
-                        new MessageElement
-                        {
-                            Id = Guid.NewGuid().ToString(),
-                            Type = "Text",
-                            Content = userMessage,
-                            Timestamp = DateTime.UtcNow
-                        }
+                        new MessageElement { Id = Guid.NewGuid().ToString(), Type = "Text", Content = userMessageText, Timestamp = DateTime.UtcNow }
                     }
                 };
-                Messages.Add(new MessageDisplay(userMessageObject));
+                Messages.Add(CreateMessageDisplay(userMessage));
 
                 // メッセージ送信と応答取得
-                // メモ：ここでエラーになった、なぜなら初期化をやってなかった。
                 var messageId = await _chatService.SendMessage(
                     this.selectedThread.Id,
-                    userMessage
+                    userMessageText
                 );
 
-                var messages = _chatService.GetThreadMessages(this.selectedThread.Id);
-                var responseMessage = messages.LastOrDefault();
+                var responseMessages = _chatService.GetThreadMessages(this.selectedThread.Id);
+                var responseMessage = responseMessages.LastOrDefault(m => m.Role == "assistant" && m.Id == messageId);
 
                 if (responseMessage != null)
                 {
-                    Messages.Add(new MessageDisplay(responseMessage));
+                    Messages.Add(CreateMessageDisplay(responseMessage));
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Failed to send message: {ex.Message}");
-                // TODO: エラー表示
                 await Shell.Current.DisplayAlert("エラー",
                     $"APIKeyが未登録です: {ex.Message}", "OK");
             }
@@ -167,6 +160,39 @@ namespace MauiApp1ChatWithAI.ViewModels
             {
                 IsLoading = false;
             }
+        }
+
+        // Message オブジェクトから MessageDisplay オブジェクトを作成する共通メソッド
+        private MessageDisplay CreateMessageDisplay(Message message)
+        {
+            var messageDisplay = new MessageDisplay(message);
+            messageDisplay.Parts = ParseMessage(message.MessageElements.FirstOrDefault()?.Content ?? "");
+            return messageDisplay;
+        }
+
+        // メッセージを解析してテキストとコードスニペットに分割するメソッド
+        private List<MessagePart> ParseMessage(string message)
+        {
+            var parts = new List<MessagePart>();
+            var codeBlockRegex = new Regex("```(.*?)```", RegexOptions.Singleline);
+            int currentIndex = 0;
+
+            foreach (Match match in codeBlockRegex.Matches(message))
+            {
+                if (match.Index > currentIndex)
+                {
+                    parts.Add(new MessagePart { Type = "Text", Content = message.Substring(currentIndex, match.Index - currentIndex).Trim() });
+                }
+                parts.Add(new MessagePart { Type = "Code", Content = match.Groups[1].Value.Trim() });
+                currentIndex = match.Index + match.Length;
+            }
+
+            if (currentIndex < message.Length)
+            {
+                parts.Add(new MessagePart { Type = "Text", Content = message.Substring(currentIndex).Trim() });
+            }
+
+            return parts;
         }
 
         [RelayCommand]

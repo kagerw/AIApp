@@ -10,6 +10,7 @@
             <converters:RoleToAlignmentConverter x:Key="RoleToAlignmentConverter"/>
             <converters:RoleToTextColorConverter x:Key="RoleToTextColorConverter"/>
             <converters:BoolToBackgroundConverter x:Key="BoolToBackgroundConverter"/>
+            <converters:PartTypeToBackgroundConverter x:Key="PartTypeToBackgroundConverter" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />

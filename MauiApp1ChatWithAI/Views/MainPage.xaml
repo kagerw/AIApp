@@ -58,15 +58,26 @@
                                    BackgroundColor="{Binding Role, Converter={StaticResource RoleToBackgroundConverter}}"
                                    CornerRadius="10"
                                    HorizontalOptions="{Binding Role, Converter={StaticResource RoleToAlignmentConverter}}">
-                                    <Label Text="{Binding Content}"
-                                       TextColor="Black"
-                                       LineBreakMode="WordWrap" />
+                                    <StackLayout>
+                                        <CollectionView ItemsSource="{Binding Parts}">
+                                            <CollectionView.ItemTemplate>
+                                                <DataTemplate x:DataType="models:MessagePart">
+                                                    <Label Text="{Binding Content}"
+                                                           TextColor="Black"
+                                                           LineBreakMode="WordWrap"
+                                                           FontFamily="{OnPlatform WinUI='Consolas', Default='monospace'}"
+                                                           BackgroundColor="{Binding Type, Converter={StaticResource PartTypeToBackgroundConverter}}"
+                                                           />
+                                                </DataTemplate>
+                                            </CollectionView.ItemTemplate>
+                                        </CollectionView>
+                                    </StackLayout>
                                 </Frame>
                             </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                     <CollectionView.EmptyView>
-                        <VerticalStackLayout HorizontalOptions="Center" 
+                        <VerticalStackLayout HorizontalOptions="Center"
                                VerticalOptions="Center">
                             <Label Text="Select a thread to start chatting"
                        TextColor="Gray"
