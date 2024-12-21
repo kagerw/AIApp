@@ -84,30 +84,14 @@ namespace MauiApp1ChatWithAI.ViewModels
             SidebarTranslation = -300;
 
             // 会話履歴の取得
-            try
-            {
-                // これを追加した。
-                await _chatService.LoadThread(thread.Id);
-                var messageHistory = await _chatDataManager.GetMessagesAsync(thread.Id);
-                Messages = new ObservableCollection<MessageDisplay>(
-                    messageHistory.Select(m => new MessageDisplay(m))
-                );
+            await LoadMessages(thread.Id); // LoadMessages を呼び出す
 
-                this.selectedThread = thread;
-                IsSidebarOpen = false;
-                SidebarTranslation = IsSidebarOpen ? 0 : -300;
+            this.selectedThread = thread;
+            IsSidebarOpen = false;
+            SidebarTranslation = IsSidebarOpen ? 0 : -300;
 
-                Debug.WriteLine($"Loaded messages count: {messageHistory.Count}");
-                IsThreadSelected = true;
-            }
-            catch (Exception ex)
-            {
-                // エラーハンドリング
-                Debug.WriteLine($"Failed to load messages: {ex.Message}");
-                Messages.Clear();
-                await Shell.Current.DisplayAlert("エラー",
-                    $"スレッドの変更に失敗しました: {ex.Message}", "OK");
-            }
+            Debug.WriteLine($"Loaded messages for thread: {thread.Id}");
+            IsThreadSelected = true;
         }
 
         [RelayCommand]
@@ -233,12 +217,9 @@ namespace MauiApp1ChatWithAI.ViewModels
         {
             try
             {
+                await _chatService.LoadThread(threadId); // 必要に応じて ChatService の LoadThread を呼び出す
                 var messageList = await _chatDataManager.GetMessagesAsync(threadId);
-                Messages.Clear();
-                foreach (var message in messageList)
-                {
-                    Messages.Add(new MessageDisplay(message));
-                }
+                Messages = new ObservableCollection<MessageDisplay>(messageList.Select(CreateMessageDisplay));
             }
             catch (Exception ex)
             {
@@ -249,10 +230,6 @@ namespace MauiApp1ChatWithAI.ViewModels
 
         partial void OnSelectedThreadChanged(ChatThread value)
         {
-            if (value != null)
-            {
-                LoadMessages(value.Id).FireAndForgetSafeAsync();
-            }
         }
 
         public void Dispose()
