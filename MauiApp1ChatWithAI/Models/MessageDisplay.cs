@@ -1,7 +1,8 @@
 ﻿// Models/MessageDisplay.cs
 using MauiApp1ChatWithAI.Models.Database;
-using System;
-using System.Collections.Generic;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.Maui.ApplicationModel; // Clipboard を使用するため
 
 namespace MauiApp1ChatWithAI.Models
 {
@@ -27,9 +28,23 @@ namespace MauiApp1ChatWithAI.Models
         }
     }
 
-    public class MessagePart
+    public partial class MessagePart : ObservableObject // ObservableObject から継承
     {
-        public string Type { get; set; } // "Text" または "Code"
-        public string Content { get; set; }
+        [ObservableProperty]
+        private string type;
+
+        [ObservableProperty]
+        private string content;
+
+        [RelayCommand]
+        private async Task CopyCode()
+        {
+            if (Type == "Code")
+            {
+                await Clipboard.SetTextAsync(Content);
+                // コピー完了のフィードバックを表示する（オプション）
+                await Shell.Current.DisplayAlert("コピー完了", "コードをクリップボードにコピーしました。", "OK");
+            }
+        }
     }
 }

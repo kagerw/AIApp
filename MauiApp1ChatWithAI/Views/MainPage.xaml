@@ -63,11 +63,15 @@
                                             <CollectionView.ItemTemplate>
                                                 <DataTemplate x:DataType="models:MessagePart">
                                                     <Label Text="{Binding Content}"
-                                                           TextColor="Black"
-                                                           LineBreakMode="WordWrap"
-                                                           FontFamily="{OnPlatform WinUI='Consolas', Default='monospace'}"
-                                                           BackgroundColor="{Binding Type, Converter={StaticResource PartTypeToBackgroundConverter}}"
-                                                           />
+                                                       TextColor="Black"
+                                                       LineBreakMode="WordWrap"
+                                                       FontFamily="{OnPlatform WinUI='Consolas', Default='monospace'}"
+                                                       BackgroundColor="{Binding Type, Converter={StaticResource PartTypeToBackgroundConverter}}">
+                                                                                                    <Label.GestureRecognizers>
+                                                            <TapGestureRecognizer
+                                                            Command="{Binding CopyCodeCommand}"/>
+                                                        </Label.GestureRecognizers>
+                                                    </Label>
                                                 </DataTemplate>
                                             </CollectionView.ItemTemplate>
                                         </CollectionView>
